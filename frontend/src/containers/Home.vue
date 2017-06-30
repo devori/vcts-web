@@ -43,6 +43,7 @@
         </v-layout>
         <v-btn round primary light v-on:click.native="login">Login</v-btn>
         <v-btn round primary light v-on:click.native="logout">Logout</v-btn>
+        <v-btn round primary light>Test Button</v-btn>
       </v-container>
     </main>
     <v-footer class="indigo">
