@@ -6,14 +6,14 @@
     <main>
       <v-container fluid>
         <v-snackbar
-          :timeout="3000"
-          :error="true"
-          :top="true"
-          :vertical="true"
-          v-model="showSnacbar"
+          timeout="3000"
+          error="true"
+          top="true"
+          vertical="true"
+          v-model="snacbar.show"
         >
-          Password is incorrect
-          <v-btn light flat @click.native="showSnacbar = false">Close</v-btn>
+          {{ snacbar.message }}
+          <v-btn light flat @click.native="snacbar.show = false">Close</v-btn>
         </v-snackbar>
         <v-card>
           <v-card-row class="indigo darken-1">
@@ -57,7 +57,7 @@
           </v-card-text>
           <v-divider></v-divider>
           <v-card-row actions>
-            <v-btn flat class="indigo--text darken-1">Create Account</v-btn>
+            <v-btn flat class="indigo--text darken-1" @click.native="onClickCreateAccount">Create Account</v-btn>
           </v-card-row>
         </v-card>
       </v-container>
@@ -71,7 +71,10 @@
       return {
         username: '',
         password: '',
-        showSnacbar: false
+        snacbar: {
+          show: false,
+          message: ''
+        }
       }
     },
     methods: {
@@ -87,9 +90,14 @@
           console.log(res.data)
         }).catch(err => {
           if (err.response.status === 401) {
-            this.showSnacbar = true
+            this.snacbar.show = true
+            this.snacbar.message = 'Password is incorrect'
           }
         })
+      },
+      onClickCreateAccount () {
+        this.snacbar.show = true
+        this.snacbar.message = 'Not Supported'
       }
     }
   }
