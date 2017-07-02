@@ -30,14 +30,14 @@ router.post('/users/:username/session', (req, res) => {
     req.session.username = username;
     res.json({
       status: 'success',
-      result: 'success'
+      result: 'Success'
     });
   } else {
     req.session.destroy();
-    throw {
-      status: 401,
+    res.json({
+      status: 'failure',
       result: 'Incorrect Password'
-    };
+    });
   }
 });
 
