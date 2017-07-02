@@ -10,7 +10,6 @@ function getHash(password) {
 }
 
 router.post('/users/:username', (req, res) => {
-  console.log(req.params.username, req.body.password);
   userDB.create({
     username: req.params.username,
     password: getHash(req.body.password)
