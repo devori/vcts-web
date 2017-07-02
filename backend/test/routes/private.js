@@ -48,6 +48,8 @@ describe('routes/public', function () {
   });
 
   describe('after login', function () {
+    const API_KEY = 'test-api-key';
+    const SIGN = 'test-sign';
 
     before(() => {
       app = express();
@@ -64,7 +66,18 @@ describe('routes/public', function () {
       });
       app.use('/', privateRouter);
 
-      nock(`${VCTS_API_URL}`)
+      nock(`${VCTS_API_URL}`, {
+        reqheaders: {
+          nonce: value => {
+            if (!value || Number(value) < new Date().getTime() -3000) {
+              return false;
+            }
+            return true;
+          },
+          "api-key": value => !!value,
+          "sign": value => !!value
+        }
+      })
       .get(`/private/markets/${MARKET}/assets`)
       .reply(200, {
         "USDT": {
@@ -93,6 +106,9 @@ describe('routes/public', function () {
     it(`when /markets/${MARKET}/assets, should return result with 200`, done => {
       supertest(app)
         .get(`/markets/${MARKET}/assets`)
+        .set('nonce', new Date().getTime())
+        .set('api-key', API_KEY)
+        .set('sign', SIGN)
         .expect('Content-Type', 'application/json; charset=utf-8')
         .expect(200)
         .end((err, res) => {

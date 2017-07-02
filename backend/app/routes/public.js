@@ -1,18 +1,14 @@
 const express = require('express');
-const crypto = require('crypto');
+const crypto = require('../util/crypto');
 const userDB = require('../database/users');
 const router = express.Router();
 
 const HASH_KEY = 'f49be88f-b607-428b-b5ba-413dd1abcde1';
 
-function getHash(password) {
-  return crypto.createHmac('sha512', HASH_KEY).update(password).digest('hex')
-}
-
 router.post('/users/:username', (req, res) => {
   userDB.create({
     username: req.params.username,
-    password: getHash(req.body.password)
+    password: crypto.getHashSha512(HASH_KEY, req.body.password)
   });
   res.status(201).json({
     status: 'success',
@@ -22,7 +18,7 @@ router.post('/users/:username', (req, res) => {
 
 router.post('/users/:username/session', (req, res) => {
   let username = req.params.username;
-  let password = getHash(req.body.password);
+  let password = crypto.getHashSha512(HASH_KEY, req.body.password);
 
   let userInfo = userDB.findByUsername(username);
   if (userInfo.password === password) {
