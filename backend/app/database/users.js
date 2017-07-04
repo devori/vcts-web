@@ -1,6 +1,6 @@
 const path = require('path');
 const lowdb = require('lowdb');
-const db = lowdb(path.resolve(__dirname, '../data/users.json'));
+const db = lowdb(path.resolve(__dirname, '../../data/users.json'));
 
 db.defaults({}).write();
 

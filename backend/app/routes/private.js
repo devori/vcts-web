@@ -3,7 +3,7 @@ const router = express.Router();
 const request = require('request');
 const crypto = require('../util/crypto');
 const { VCTS_API_URL } = require('../properties');
-const { VCTS_API_KEY } = require('../data/keys');
+const { VCTS_API_KEY } = require('../../data/keys');
 
 router.all('*', (req, res, next) => {
   let username = req.session.username;
