@@ -1,9 +1,4 @@
 <template>
-  <v-app>
-    <v-toolbar fixed class="indigo darken-4" light>
-      <v-toolbar-title>Virtual Currency Trading System</v-toolbar-title>
-    </v-toolbar>
-    <main>
       <v-container fluid>
         <v-snackbar
           timeout="3000"
@@ -61,8 +56,6 @@
           </v-card-row>
         </v-card>
       </v-container>
-    </main>
-  </v-app>
 </template>
 <script>
   import axios from 'axios'
