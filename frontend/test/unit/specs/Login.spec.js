@@ -27,6 +27,9 @@ describe('Login.vue', function () {
       result: 'Success'
     })
   })
+  after(() => {
+    mockAxios.restore
+  })
   it('should move main page when login is success', done => {
     vm.username = 'test-user'
     vm.password = 'test-password'

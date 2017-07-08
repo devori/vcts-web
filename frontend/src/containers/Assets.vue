@@ -1,30 +1,33 @@
 <template>
   <v-container fluid>
-    <v-tabs light fixed centered>
+    <v-tabs light fixed centered v-model="active">
       <v-tabs-bar slot="activators" class="indigo">
         <v-tabs-slider class="yellow"></v-tabs-slider>
         <v-tabs-item
-          v-for="base in bases"
-          :href="'#assets-tab-' + base"
+          v-for="(base, index) in bases"
+          :key="index"
+          :href="'#assets-tab-' + index"
         >
           {{ base }}
         </v-tabs-item>
       </v-tabs-bar>
       <v-tabs-content
-        v-for="base in bases"
-        :id="'assets-tab-' + base"
+        v-for="(base, index) in bases"
+        :key="index"
+        :id="'assets-tab-' + index"
       >
         <v-card flat>
           <v-data-table
               :headers="headers"
-              :items="filterByBase(base)"
+              :items="listByBase(base)"
+              :pagination="{ rowsPerPage: -1 }"
               class="elevation-1 text-xs-center"
             >
             <template slot="items" scope="props">
               <td class="text-xs-center">{{ props.item.vcType }}</td>
               <td class="text-xs-right">{{ props.item.units }}</td>
               <td class="text-xs-right">{{ props.item.price }}</td>
-              <td class="text-xs-center">{{ (new Date(props.item.timestamp)).toLocaleString() }}</td>
+              <td class="text-xs-center">{{ props.item.units * props.item.price }}</td>
             </template>
           </v-data-table>
         </v-card>
@@ -33,47 +36,29 @@
   </v-container>
 </template>
 <script>
+  import axios from 'axios'
   export default {
+    mounted () {
+      this.loadAssets()
+    },
     data () {
       return {
         headers: [
           { text: 'Coin', value: 'vcTye' },
           { text: 'Units', value: 'units' },
           { text: 'Price', value: 'price' },
-          { text: 'Timestamp', value: 'timestamp' }
+          { text: 'Total', value: 'total' }
         ],
-        assets: [
-          {
-            'base': 'USDT',
-            'vcType': 'DASH',
-            'units': 0.4,
-            'price': 2500,
-            'timestamp': 1,
-            'uuid': '1'
-          },
-          {
-            'base': 'BTC',
-            'vcType': 'ETH',
-            'units': 1,
-            'price': 0.1,
-            'timestamp': 2,
-            'uuid': '2'
-          },
-          {
-            'base': 'USDT',
-            'vcType': 'BTC',
-            'units': 0.5,
-            'price': 2600,
-            'timestamp': 3,
-            'uuid': '3'
-          }
-        ]
+        assets: {},
+        active: ''
       }
     },
     computed: {
       bases () {
         let result = []
-        this.assets.forEach(i => result.push(i.base))
+        for (let base in this.assets) {
+          result.push(base)
+        }
         result.sort((k1, k2) => k1 < k2 ? -1 : 1)
         for (let i = result.length - 1; i > 0; i--) {
           if (result[i - 1] === result[i]) {
@@ -83,19 +68,28 @@
         return result
       }
     },
+    watch: {
+      bases (newValue, oldValue) {
+        if (newValue.length > 0) {
+          this.$nextTick(() => {
+            this.active = 'assets-tab-0'
+          })
+        }
+      }
+    },
     methods: {
-      filterByBase (base) {
-        let result = []
-        this.assets.forEach(i => {
-          if (i.base === base) {
-            result.push(i)
+      loadAssets () {
+        axios.get('/private/markets/poloniex/assets').then(res => {
+          for (let k in res.data.result) {
+            this.$set(this.assets, k, res.data.result[k])
           }
-        })
-        result.sort((i1, i2) => {
-          if (i1.vcType < i2.vcType) return -1
-          else if (i1.vcType > i2.vcType) return 1
-          return i1.timestamp - i2.timestamp
-        })
+        }).catch(() => {})
+      },
+      listByBase (base) {
+        let result = []
+        for (let k in this.assets[base]) {
+          result.push(...this.assets[base][k])
+        }
         return result
       }
     }
