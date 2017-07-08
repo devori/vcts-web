@@ -3,7 +3,6 @@ const router = express.Router();
 const request = require('request');
 const crypto = require('../util/crypto');
 const { VCTS_API_URL } = require('../properties');
-const { VCTS_API_KEY } = require('../../data/keys');
 
 router.all('*', (req, res, next) => {
   let username = req.session.username;
@@ -21,7 +20,7 @@ router.get('/markets/:market/assets', (req, res) => {
   let market = req.params.market;
 
   let nonce = new Date().getTime();
-  let sign = crypto.getHashSha512(VCTS_API_KEY.SECRET_KEY, `nonce=${nonce}`);
+  let sign = crypto.getHashSha512(req.session.vctsKey.secretKey, `nonce=${nonce}`);
 
   request({
     method: 'GET',
@@ -29,7 +28,7 @@ router.get('/markets/:market/assets', (req, res) => {
     headers: {
       nonce,
       sign,
-      'api-key': VCTS_API_KEY.API_KEY
+      'api-key': req.session.vctsKey.apiKey
     }
   }, (err, vctsRes, body) => {
     if (vctsRes.statusCode !== 200) {

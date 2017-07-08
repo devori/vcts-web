@@ -23,6 +23,7 @@ router.post('/sessions', (req, res) => {
   let userInfo = userDB.findByUsername(username);
   if (userInfo && userInfo.password === password) {
     req.session.username = username;
+    req.session.vctsKey = userInfo.vctsKey
     res.json({
       status: 'success',
       result: 'Success'
