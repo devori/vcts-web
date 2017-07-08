@@ -31,6 +31,10 @@ module.exports = {
       '/public': {
         target: 'http://localhost:3000',
         changeOrigin: true
+      },
+      '/private': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
       }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"

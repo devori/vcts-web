@@ -1,10 +1,10 @@
 <template>
   <v-container fluid>
     <v-snackbar
-      timeout="3000"
-      error="true"
-      top="true"
-      vertical="true"
+      :timeout="3000"
+      :error="true"
+      :top="true"
+      :vertical="true"
       v-model="snacbar.show"
     >
       {{ snacbar.message }}
@@ -43,7 +43,7 @@
             </v-flex>
           </v-layout>
           <v-layout row>
-            <v-spacing></v-spacing>
+            <v-spacer></v-spacer>
           </v-layout>
           <v-layout row>
             <v-btn block round primary light @click.native="onClickLogin">LOGIN</v-btn>
@@ -77,14 +77,17 @@
         if (!username || !password) {
           return
         }
-        axios.post(`/public/users/${username}/session`, {
+        axios.post('/public/sessions', {
+          username,
           password
         }).then(res => {
-          console.log(res.data)
+          this.$router.replace('/main')
         }).catch(err => {
+          this.snacbar.show = true
           if (err.response.status === 401) {
-            this.snacbar.show = true
             this.snacbar.message = 'Password is incorrect'
+          } else {
+            this.snacbar.message = 'Server Error'
           }
         })
       },
@@ -95,7 +98,7 @@
     }
   }
 </script>
-<style lang="less">
+<style scoped lang="less">
 
   .container {
     max-width: 500px;
