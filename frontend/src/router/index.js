@@ -18,11 +18,13 @@ export default new Router({
     },
     {
       path: '/main',
-      component: Main
-    },
-    {
-      path: '/assets',
-      component: Assets
+      component: Main,
+      children: [
+        {
+          path: 'assets',
+          component: Assets
+        }
+      ]
     }
   ]
 })

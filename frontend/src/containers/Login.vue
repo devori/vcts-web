@@ -81,7 +81,7 @@
           username,
           password
         }).then(res => {
-          this.$router.replace('/main')
+          this.$router.replace('/main/assets')
         }).catch(err => {
           this.snacbar.show = true
           if (err.response.status === 401) {

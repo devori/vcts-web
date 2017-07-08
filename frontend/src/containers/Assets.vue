@@ -1,39 +1,37 @@
 <template>
-  <v-container fluid>
-    <v-tabs light fixed centered v-model="active">
-      <v-tabs-bar slot="activators" class="indigo">
-        <v-tabs-slider class="yellow"></v-tabs-slider>
-        <v-tabs-item
-          v-for="(base, index) in bases"
-          :key="index"
-          :href="'#assets-tab-' + index"
-        >
-          {{ base }}
-        </v-tabs-item>
-      </v-tabs-bar>
-      <v-tabs-content
+  <v-tabs light fixed centered v-model="active">
+    <v-tabs-bar slot="activators" class="indigo">
+      <v-tabs-slider class="yellow"></v-tabs-slider>
+      <v-tabs-item
         v-for="(base, index) in bases"
         :key="index"
-        :id="'assets-tab-' + index"
+        :href="'#assets-tab-' + index"
       >
-        <v-card flat>
-          <v-data-table
-              :headers="headers"
-              :items="listByBase(base)"
-              :pagination="{ rowsPerPage: -1 }"
-              class="elevation-1 text-xs-center"
-            >
-            <template slot="items" scope="props">
-              <td class="text-xs-center">{{ props.item.vcType }}</td>
-              <td class="text-xs-right">{{ props.item.units }}</td>
-              <td class="text-xs-right">{{ props.item.price }}</td>
-              <td class="text-xs-center">{{ props.item.units * props.item.price }}</td>
-            </template>
-          </v-data-table>
-        </v-card>
-      </v-tabs-content>
-    </v-tabs>
-  </v-container>
+        {{ base }}
+      </v-tabs-item>
+    </v-tabs-bar>
+    <v-tabs-content
+      v-for="(base, index) in bases"
+      :key="index"
+      :id="'assets-tab-' + index"
+    >
+      <v-card flat>
+        <v-data-table
+            :headers="headers"
+            :items="listByBase(base)"
+            :pagination="{ rowsPerPage: -1 }"
+            class="elevation-1 text-xs-center"
+          >
+          <template slot="items" scope="props">
+            <td class="text-xs-center">{{ props.item.vcType }}</td>
+            <td class="text-xs-right">{{ props.item.units }}</td>
+            <td class="text-xs-right">{{ props.item.price }}</td>
+            <td class="text-xs-center">{{ props.item.units * props.item.price }}</td>
+          </template>
+        </v-data-table>
+      </v-card>
+    </v-tabs-content>
+  </v-tabs>
 </template>
 <script>
   import axios from 'axios'

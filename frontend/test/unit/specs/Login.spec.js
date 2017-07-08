@@ -30,12 +30,12 @@ describe('Login.vue', function () {
   after(() => {
     mockAxios.restore
   })
-  it('should move main page when login is success', done => {
+  it('should move main/assets page when login is success', done => {
     vm.username = 'test-user'
     vm.password = 'test-password'
     vm.onClickLogin()
     setTimeout(() => {
-      expect(vm.$router.currentRoute.path).to.equal('/main')
+      expect(vm.$router.currentRoute.path).to.equal('/main/assets')
       done()
     }, 1000)
     this.timeout(3000)
