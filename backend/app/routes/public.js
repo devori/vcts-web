@@ -16,12 +16,12 @@ router.post('/users/:username', (req, res) => {
   });
 });
 
-router.post('/users/:username/session', (req, res) => {
-  let username = req.params.username;
+router.post('/sessions', (req, res) => {
+  let username = req.body.username;
   let password = crypto.getHashSha512(HASH_KEY, req.body.password);
 
   let userInfo = userDB.findByUsername(username);
-  if (userInfo.password === password) {
+  if (userInfo && userInfo.password === password) {
     req.session.username = username;
     res.json({
       status: 'success',
@@ -31,7 +31,7 @@ router.post('/users/:username/session', (req, res) => {
     req.session.destroy();
     res.json({
       status: 'failure',
-      result: 'Incorrect Password'
+      result: 'Incorrect Username or Password'
     });
   }
 });

@@ -57,10 +57,11 @@ describe('routes/public', function () {
     this.timeout(3000);
   });
 
-  it(`when users/${USERNAME}/session call with correct password using post, should return success`, done => {
+  it(`when /sessions call with username and correct password using post, should return success`, done => {
     supertest(app)
-      .post(`/users/${USERNAME}/session`)
+      .post(`/sessions`)
       .send({
+        username: USERNAME,
         password: CORRECT_PASSWORD
       })
       .expect('Content-Type', 'application/json; charset=utf-8')
@@ -78,10 +79,11 @@ describe('routes/public', function () {
     this.timeout(3000);
   });
 
-  it(`when users/${USERNAME}/session call with incorrect password using post, should return failure with message`, done => {
+  it(`when /sessions call with incorrect password using post, should return failure with message`, done => {
     supertest(app)
-      .post(`/users/${USERNAME}/session`)
+      .post(`/sessions`)
       .send({
+        username: USERNAME,
         password: INCORRECT_PASSWORD
       })
       .expect('Content-Type', 'application/json; charset=utf-8')
@@ -92,7 +94,7 @@ describe('routes/public', function () {
           return;
         }
         expect(res.body.status).to.equal('failure');
-        expect(res.body.result).to.equal('Incorrect Password');
+        expect(res.body.result).to.equal('Incorrect Username or Password');
 
         done();
       });
