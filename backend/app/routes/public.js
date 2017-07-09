@@ -16,7 +16,7 @@ router.post('/users/:username', (req, res) => {
   });
 });
 
-router.post('/sessions', (req, res) => {
+router.post('/session', (req, res) => {
   let username = req.body.username;
   let password = crypto.getHashSha512(HASH_KEY, req.body.password);
 

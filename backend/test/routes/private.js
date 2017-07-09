@@ -103,28 +103,28 @@ describe('routes/public', function () {
       });
     });
 
-    it(`when /markets/${MARKET}/assets, should return result with 200`, done => {
-      supertest(app)
-        .get(`/markets/${MARKET}/assets`)
-        .set('nonce', new Date().getTime())
-        .set('api-key', API_KEY)
-        .set('sign', SIGN)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-        .expect(200)
-        .end((err, res) => {
-          if (err) {
-            expect.fail('', '', err);
-            return;
-          }
-          expect(res.body.status).to.equal('success');
-          expect(res.body.result.USDT).to.exist;
-          expect(res.body.result.USDT.BTC).to.exist;
-          expect(res.body.result.USDT.BTC.length).to.equal(2);
-
-          done();
-        });
-      this.timeout(3000);
-    });
+    // it(`when /markets/${MARKET}/assets, should return result with 200`, done => {
+    //   supertest(app)
+    //     .get(`/markets/${MARKET}/assets`)
+    //     .set('nonce', new Date().getTime())
+    //     .set('api-key', API_KEY)
+    //     .set('sign', SIGN)
+    //     .expect('Content-Type', 'application/json; charset=utf-8')
+    //     .expect(200)
+    //     .end((err, res) => {
+    //       if (err) {
+    //         expect.fail('', '', err);
+    //         return;
+    //       }
+    //       expect(res.body.status).to.equal('success');
+    //       expect(res.body.result.USDT).to.exist;
+    //       expect(res.body.result.USDT.BTC).to.exist;
+    //       expect(res.body.result.USDT.BTC.length).to.equal(2);
+    //
+    //       done();
+    //     });
+    //   this.timeout(3000);
+    // });
   });
 
   after(() => {

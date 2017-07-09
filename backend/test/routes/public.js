@@ -59,7 +59,7 @@ describe('routes/public', function () {
 
   it(`when /sessions call with username and correct password using post, should return success`, done => {
     supertest(app)
-      .post(`/sessions`)
+      .post('/session')
       .send({
         username: USERNAME,
         password: CORRECT_PASSWORD
@@ -79,9 +79,9 @@ describe('routes/public', function () {
     this.timeout(3000);
   });
 
-  it(`when /sessions call with incorrect password using post, should return failure with message`, done => {
+  it(`when /session call with incorrect password using post, should return failure with message`, done => {
     supertest(app)
-      .post(`/sessions`)
+      .post(`/session`)
       .send({
         username: USERNAME,
         password: INCORRECT_PASSWORD
@@ -100,6 +100,8 @@ describe('routes/public', function () {
       });
     this.timeout(3000);
   });
+
+  // it('when /sessions')
 
   after(() => {
     mockUserDB.restore();
