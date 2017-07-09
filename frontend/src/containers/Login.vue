@@ -70,6 +70,19 @@
         }
       }
     },
+    mounted () {
+      console.log(this.$store.state.username)
+      if (this.$store.state.username) {
+        this.$router.replace('/main/assets')
+      } else {
+        axios.get('/public/session').then(res => {
+          if (res.data.status === 'success') {
+            this.$store.dispatch('login', res.data.result.username)
+            this.$router.replace('/main/assets')
+          }
+        }).catch(() => {})
+      }
+    },
     methods: {
       onClickLogin () {
         let username = this.username
@@ -77,10 +90,11 @@
         if (!username || !password) {
           return
         }
-        axios.post('/public/sessions', {
+        axios.post('/public/session', {
           username,
           password
         }).then(res => {
+          this.$store.dispatch('login', username)
           this.$router.replace('/main/assets')
         }).catch(err => {
           this.snacbar.show = true

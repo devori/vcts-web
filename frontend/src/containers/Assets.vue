@@ -81,7 +81,11 @@
           for (let k in res.data.result) {
             this.$set(this.assets, k, res.data.result[k])
           }
-        }).catch(() => {})
+        }).catch(err => {
+          if (err.response.status === 401) {
+            this.$store.dispatch('logout')
+          }
+        })
       },
       listByBase (base) {
         let result = []

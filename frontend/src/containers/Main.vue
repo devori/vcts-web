@@ -25,7 +25,13 @@
 </template>
 <script>
   export default {
-    data: () => ({
-    })
+    data () {
+      return {}
+    },
+    mounted () {
+      if (this.$store.state.username === null) {
+        this.$router.replace('/')
+      }
+    }
   }
 </script>
