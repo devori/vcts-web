@@ -101,7 +101,23 @@ describe('routes/public', function () {
     this.timeout(3000);
   });
 
-  // it('when /sessions')
+  it('should failure code when session does not exist and /session call', done => {
+    supertest(app)
+      .get(`/session`)
+      .expect('Content-Type', 'application/json; charset=utf-8')
+      .expect(200)
+      .end((err, res) => {
+        if (err) {
+          expect.fail('', '', err);
+          return;
+        }
+        expect(res.body.status).to.equal('failure');
+        expect(res.body.result).to.equal('It does not exist');
+
+        done();
+      });
+    this.timeout(3000);
+  })
 
   after(() => {
     mockUserDB.restore();

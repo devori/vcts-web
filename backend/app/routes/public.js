@@ -16,6 +16,22 @@ router.post('/users/:username', (req, res) => {
   });
 });
 
+router.get('/session', (req, res) => {
+  if (req.session.username) {
+    res.json({
+      status: 'success',
+      result: {
+        username: req.session.username
+      }
+    })
+  } else {
+    res.json({
+      status: 'failure',
+      result: 'It does not exist'
+    })
+  }
+})
+
 router.post('/session', (req, res) => {
   let username = req.body.username;
   let password = crypto.getHashSha512(HASH_KEY, req.body.password);
