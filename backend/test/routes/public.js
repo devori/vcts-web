@@ -88,7 +88,7 @@ describe('routes/public', function () {
         password: INCORRECT_PASSWORD
       })
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect(200)
+      .expect(400)
       .end((err, res) => {
         if (err) {
           expect.fail('', '', err);
@@ -106,7 +106,7 @@ describe('routes/public', function () {
     supertest(app)
       .get(`/session`)
       .expect('Content-Type', 'application/json; charset=utf-8')
-      .expect(200)
+      .expect(404)
       .end((err, res) => {
         if (err) {
           expect.fail('', '', err);

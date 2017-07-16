@@ -31,7 +31,7 @@ router.get('/session', (req, res) => {
       }
     })
   } else {
-    res.json({
+    res.status(404).json({
       status: 'failure',
       result: 'It does not exist'
     })
@@ -52,7 +52,7 @@ router.post('/session', (req, res) => {
     });
   } else {
     req.session.destroy();
-    res.json({
+    res.status(400).json({
       status: 'failure',
       result: 'Incorrect Username or Password'
     });

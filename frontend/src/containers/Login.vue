@@ -71,14 +71,10 @@
       }
     },
     mounted () {
-      if (this.$store.state.username) {
-        this.$router.replace('/main/assets')
-      } else {
+      if (!this.$store.state.username) {
         axios.get('/public/session').then(res => {
-          if (res.data.status === 'success') {
-            this.$store.dispatch('login', res.data.result.username)
-            this.$router.replace('/main/assets')
-          }
+          this.$store.dispatch('login', res.data.result.username)
+          this.$router.replace('/main/assets')
         }).catch(() => {})
       }
     },
@@ -95,13 +91,9 @@
         }).then(res => {
           this.$store.dispatch('login', username)
           this.$router.replace('/main/assets')
-        }).catch(err => {
+        }).catch(() => {
           this.snacbar.show = true
-          if (err.response.status === 401) {
-            this.snacbar.message = 'Password is incorrect'
-          } else {
-            this.snacbar.message = 'Server Error'
-          }
+          this.snacbar.message = 'Failure'
         })
       },
       onClickCreateAccount () {
