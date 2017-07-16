@@ -5,7 +5,7 @@ const router = express.Router();
 
 const HASH_KEY = 'f49be88f-b607-428b-b5ba-413dd1abcde1';
 
-router.post('/users/:username', (req, res) => {
+router.post('/users', (req, res) => {
   userDB.create({
     username: req.params.username,
     password: crypto.getHashSha512(HASH_KEY, req.body.password)

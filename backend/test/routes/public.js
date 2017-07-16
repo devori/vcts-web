@@ -33,12 +33,13 @@ describe('routes/public', function () {
     app.use('/', publicRouter);
   });
 
-  it(`when users/${USERNAME} call with password using post, should return success result with 201 code`, done => {
+  it(`when users call with username and password using post, should return success result with 201 code`, done => {
     let expectation = mockUserDB.expects('create');
     expectation.once();
     supertest(app)
-      .post(`/users/${USERNAME}`)
+      .post('/users')
       .send({
+        username: USERNAME,
         password: CORRECT_PASSWORD
       })
       .expect('Content-Type', 'application/json; charset=utf-8')

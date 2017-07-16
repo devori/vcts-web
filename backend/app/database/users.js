@@ -14,10 +14,7 @@ function findByUsername (username) {
 function create (userInfo) {
   let user = findByUsername(userInfo.username);
   if (user !== null) {
-    throw {
-      status: 400,
-      result: 'duplicated username'
-    };
+    throw 'duplicated username'
   }
   db.set(userInfo.username, userInfo).write();
   return findByUsername(userInfo.userId);
