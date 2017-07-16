@@ -14,7 +14,7 @@ Vue.prototype.$http = axios
 Vue.use(Vuetify)
 
 router.beforeEach((to, from, next) => {
-  if (to.path === '/login') {
+  if (to.path === '/login' && store.state.username) {
     next('/main/assets')
   } else if (to.path.startsWith('/main') && !store.state.username) {
     next('/login')
