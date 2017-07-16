@@ -5,20 +5,23 @@ const supertest = require('supertest');
 const sinon = require('sinon');
 const { expect, should } = require('chai')
 const publicRouter = require('../../app/routes/public');
-const userDB = require('../../app/database/users')
+const account = require('../../app/account');
 
 describe('routes/public', function () {
   const USERNAME = 'test-user';
+  const NON_EXIST_USERNAME = 'non-exist-username';
   const CORRECT_PASSWORD = 'correct-password';
   const HASHED_PASSWORD = 'correct-password';
   const INCORRECT_PASSWORD = 'incorrect-password';
 
   let app;
-  let mockUserDB;
   before(() => {
-    mockUserDB = sinon.mock(userDB);
+    sinon.stub(account, 'createAccount').withArgs({
+      username: USERNAME,
+      password: sinon.match.string
+    }).returns(Promise.resolve({ username: USERNAME }));
 
-    sinon.stub(userDB, 'findByUsername').withArgs(USERNAME).returns({
+    sinon.stub(account, 'findByUsername').withArgs(USERNAME).returns({
       password: 'a17dc62b00435621bb222098732e5901dbfcd571dad906dbbc36ad5f479ab29f860b0fc4bcde10bc80f8d057c0f52bcc40ae043ecd095e0fe1114ee7e73a354c'
     });
 
@@ -34,8 +37,6 @@ describe('routes/public', function () {
   });
 
   it(`when users call with username and password using post, should return success result with 201 code`, done => {
-    let expectation = mockUserDB.expects('create');
-    expectation.once();
     supertest(app)
       .post('/users')
       .send({
@@ -52,7 +53,6 @@ describe('routes/public', function () {
         expect(res.body.status).to.equal('success');
         expect(res.body.result).to.equal('Success');
 
-        expectation.verify();
         done();
       });
     this.timeout(3000);
@@ -121,7 +121,7 @@ describe('routes/public', function () {
   })
 
   after(() => {
-    mockUserDB.restore();
-    userDB.findByUsername.restore();
+    account.createAccount.restore();
+    account.findByUsername.restore();
   });
 });

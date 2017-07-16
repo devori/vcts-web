@@ -1,18 +1,24 @@
 const express = require('express');
 const crypto = require('../util/crypto');
-const userDB = require('../database/users');
+const account = require('../account');
 const router = express.Router();
 
 const HASH_KEY = 'f49be88f-b607-428b-b5ba-413dd1abcde1';
 
 router.post('/users', (req, res) => {
-  userDB.create({
-    username: req.params.username,
+  account.createAccount({
+    username: req.body.username,
     password: crypto.getHashSha512(HASH_KEY, req.body.password)
-  });
-  res.status(201).json({
-    status: 'success',
-    result: 'Success'
+  }).then(info => {
+    res.status(201).json({
+      status: 'success',
+      result: 'Success'
+    });
+  }).catch(e => {
+    res.status(400).json({
+      status: 'failure',
+      result: e
+    })
   });
 });
 
@@ -36,10 +42,10 @@ router.post('/session', (req, res) => {
   let username = req.body.username;
   let password = crypto.getHashSha512(HASH_KEY, req.body.password);
 
-  let userInfo = userDB.findByUsername(username);
+  let userInfo = account.findByUsername(username);
   if (userInfo && userInfo.password === password) {
     req.session.username = username;
-    req.session.vctsKey = userInfo.vctsKey
+    req.session.vctsKey = userInfo.vcts
     res.json({
       status: 'success',
       result: 'Success'

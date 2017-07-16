@@ -18,7 +18,6 @@ router.all('*', (req, res, next) => {
 
 router.get('/markets/:market/assets', (req, res) => {
   let market = req.params.market;
-
   let nonce = new Date().getTime();
   let sign = crypto.getHashSha512(req.session.vctsKey.secretKey, `nonce=${nonce}`);
 
