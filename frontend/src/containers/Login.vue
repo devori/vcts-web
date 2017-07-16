@@ -71,7 +71,6 @@
       }
     },
     mounted () {
-      console.log(this.$store.state.username)
       if (this.$store.state.username) {
         this.$router.replace('/main/assets')
       } else {

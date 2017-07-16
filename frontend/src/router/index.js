@@ -10,11 +10,11 @@ export default new Router({
   routes: [
     {
       path: '/',
-      component: Login
+      redirect: '/login'
     },
     {
       path: '/login',
-      redirect: '/'
+      component: Login
     },
     {
       path: '/main',

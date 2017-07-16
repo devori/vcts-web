@@ -13,6 +13,16 @@ Vue.prototype.$http = axios
 
 Vue.use(Vuetify)
 
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login') {
+    next('/main/assets')
+  } else if (to.path.startsWith('/main') && !store.state.username) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   router,
