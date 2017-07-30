@@ -44,4 +44,12 @@ router.get('/markets/:market/assets', (req, res) => {
   });
 });
 
+router.delete('/session', (req, res) => {
+  req.session.destroy(err => {
+    if (err) res.status(500);
+    else res.status(200);
+    res.send();
+  });
+});
+
 module.exports = router;

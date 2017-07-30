@@ -45,6 +45,20 @@ describe('routes/public', function () {
         });
       this.timeout(3000);
     });
+
+    it('should receive 500 when session does not exist', done => {
+      supertest(app)
+        .delete(`/session`)
+        .expect(401)
+        .end((err, res) => {
+          if (err) {
+            expect.fail('', '', err);
+            return;
+          }
+          done();
+        });
+      this.timeout(3000)
+    });
   });
 
   describe('after login', function () {
@@ -101,6 +115,20 @@ describe('routes/public', function () {
           ]
         }
       });
+    });
+
+    it('should logout when session exists', done => {
+      supertest(app)
+        .delete(`/session`)
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            expect.fail('', '', err);
+            return;
+          }
+          done();
+        });
+      this.timeout(3000)
     });
 
     // it(`when /markets/${MARKET}/assets, should return result with 200`, done => {
