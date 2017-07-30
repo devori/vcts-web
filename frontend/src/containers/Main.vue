@@ -6,14 +6,8 @@
           <v-toolbar-side-icon light></v-toolbar-side-icon>
           <v-toolbar-title light>Title</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn light icon>
-            <v-icon>search</v-icon>
-          </v-btn>
-          <v-btn light icon>
-            <v-icon>favorite</v-icon>
-          </v-btn>
-          <v-btn light icon>
-            <v-icon>more_vert</v-icon>
+          <v-btn light flat @click.native="onClickLogout">
+            Logout
           </v-btn>
         </v-toolbar>
       </v-card>
@@ -24,13 +18,21 @@
   </v-layout>
 </template>
 <script>
+  import axios from 'axios'
   export default {
     data () {
       return {}
     },
-    mounted () {
-      if (this.$store.state.username === null) {
-        this.$router.replace('/')
+    methods: {
+      onClickLogout () {
+        axios.delete('/private/session').then(() => {
+          this.$store.dispatch('logout')
+          this.$router.replace('/')
+        }).catch(err => {
+          if (err.response.status === 401) {
+            this.$router.replace('/')
+          }
+        })
       }
     }
   }

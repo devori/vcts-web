@@ -39,6 +39,7 @@
                 label="Enter your password"
                 type="password"
                 v-model="password"
+                @keyup.enter.native="onClickLogin"
               ></v-text-field>
             </v-flex>
           </v-layout>
