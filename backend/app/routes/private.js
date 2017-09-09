@@ -17,20 +17,14 @@ router.all('*', (req, res, next) => {
 });
 
 router.get('/markets/:market/assets', (req, res) => {
+  let username = req.session.username;
   let market = req.params.market;
-  let nonce = new Date().getTime();
-  let sign = crypto.getHashSha512(req.session.vctsKey.secretKey, `nonce=${nonce}`);
 
   request({
     method: 'GET',
-    url: `${VCTS_API_URL}/private/markets/${market}/assets`,
-    headers: {
-      nonce,
-      sign,
-      'api-key': req.session.vctsKey.apiKey
-    }
+    url: `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets`
   }, (err, vctsRes, body) => {
-    if (vctsRes.statusCode !== 200) {
+    if (err) {
       res.status(500).json({
         status: 'failure',
         result: 'Failure'

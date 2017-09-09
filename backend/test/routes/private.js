@@ -8,7 +8,7 @@ const nock = require('nock');
 const privateRouter = require('../../app/routes/private');
 const { VCTS_API_URL } = require('../../app/properties');
 
-describe('routes/public', function () {
+describe('routes/private', function () {
   const USERNAME = 'test-user';
   const MARKET = 'poloniex';
 
@@ -28,25 +28,7 @@ describe('routes/public', function () {
       app.use('/', privateRouter);
     });
 
-    it(`when /markets/${MARKET}/assets should return failure with 401`, done => {
-      supertest(app)
-        .get(`/markets/${MARKET}/assets`)
-        .expect('Content-Type', 'application/json; charset=utf-8')
-        .expect(401)
-        .end((err, res) => {
-          if (err) {
-            expect.fail('', '', err);
-            return;
-          }
-          expect(res.body.status).to.equal('failure');
-          expect(res.body.result).to.equal('Unauthenticated');
-
-          done();
-        });
-      this.timeout(3000);
-    });
-
-    it('should receive 500 when session does not exist', done => {
+    it('should receive 401 when session does not exist', done => {
       supertest(app)
         .delete(`/session`)
         .expect(401)
@@ -57,7 +39,6 @@ describe('routes/public', function () {
           }
           done();
         });
-      this.timeout(3000)
     });
   });
 
@@ -79,42 +60,6 @@ describe('routes/public', function () {
         next();
       });
       app.use('/', privateRouter);
-
-      nock(`${VCTS_API_URL}`, {
-        reqheaders: {
-          nonce: value => {
-            if (!value || Number(value) < new Date().getTime() -3000) {
-              return false;
-            }
-            return true;
-          },
-          "api-key": value => !!value,
-          "sign": value => !!value
-        }
-      })
-      .get(`/private/markets/${MARKET}/assets`)
-      .reply(200, {
-        "USDT": {
-          "BTC": [
-            {
-              "base": "USDT",
-              "vcType": "BTC",
-              "units": 0.4,
-              "price": 2500,
-              "timestamp": 123,
-              "uuid": "265dac7d-1aaa-46b0-9f46-6dac2f45f44f"
-            },
-            {
-              "base": "USDT",
-              "vcType": "BTC",
-              "units": 0.4,
-              "price": 2500,
-              "timestamp": 123,
-              "uuid": "3f70c6a7-6898-48b4-b4e5-8944d87a66cd"
-            }
-          ]
-        }
-      });
     });
 
     it('should logout when session exists', done => {
@@ -128,31 +73,7 @@ describe('routes/public', function () {
           }
           done();
         });
-      this.timeout(3000)
     });
-
-    // it(`when /markets/${MARKET}/assets, should return result with 200`, done => {
-    //   supertest(app)
-    //     .get(`/markets/${MARKET}/assets`)
-    //     .set('nonce', new Date().getTime())
-    //     .set('api-key', API_KEY)
-    //     .set('sign', SIGN)
-    //     .expect('Content-Type', 'application/json; charset=utf-8')
-    //     .expect(200)
-    //     .end((err, res) => {
-    //       if (err) {
-    //         expect.fail('', '', err);
-    //         return;
-    //       }
-    //       expect(res.body.status).to.equal('success');
-    //       expect(res.body.result.USDT).to.exist;
-    //       expect(res.body.result.USDT.BTC).to.exist;
-    //       expect(res.body.result.USDT.BTC.length).to.equal(2);
-    //
-    //       done();
-    //     });
-    //   this.timeout(3000);
-    // });
   });
 
   after(() => {
