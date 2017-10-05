@@ -11,7 +11,7 @@ module.exports = {
         reject('Duplicated username');
       } else {
         request.post({
-          url: `${VCTS_API_URL}/public/accounts`,
+          url: `${VCTS_API_URL}/public/users`,
           json: true,
           body: {
             username: info.username

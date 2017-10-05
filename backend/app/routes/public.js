@@ -2,8 +2,7 @@ const express = require('express');
 const crypto = require('../util/crypto');
 const account = require('../account');
 const router = express.Router();
-
-const HASH_KEY = 'f49be88f-b607-428b-b5ba-413dd1abcde1';
+const HASH_KEY = require('../properties').HASH_KEY;
 
 router.post('/users', (req, res) => {
   account.createAccount({
