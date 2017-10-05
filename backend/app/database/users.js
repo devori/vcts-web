@@ -17,7 +17,7 @@ function create (userInfo) {
     throw 'duplicated username'
   }
   db.set(userInfo.username, userInfo).write();
-  return findByUsername(userInfo.userId);
+  return findByUsername(userInfo.username);
 }
 
 module.exports = {

@@ -1,2 +1,3 @@
 app/public/
 data/
+npm-debug.log*
