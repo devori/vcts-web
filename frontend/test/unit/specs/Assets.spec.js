@@ -19,6 +19,15 @@ describe('containers/Assets', function () {
         }
       ]
     })
+    mockAxios.onGet('/private/markets/poloniex/tickers/BTC').reply(200, {
+      ETH: {
+        base: 'BTC',
+        vcType: 'ETH',
+        'bid': 0.06888222,
+        'ask': 0.06901976,
+        'timestamp': 1507474614729
+      }
+    })
     Vue.use(Vuetify)
     const Constructor = Vue.extend(Assets)
     vm = new Constructor().$mount()
@@ -77,6 +86,10 @@ describe('containers/Assets', function () {
         expect(arr[1].units).to.equal(2)
         expect(arr[1].rate.toFixed(2)).to.equal('0.15')
       })
+      it('should return array that included bid when it call', () => {
+        let arr = vm.listAssets
+        expect(arr[1].change).to.exist
+      })
     })
   })
   describe('methods', () => {
@@ -85,6 +98,15 @@ describe('containers/Assets', function () {
         vm.loadAssetsByBase('BTC')
         setTimeout(() => {
           expect(vm.assets.BTC[0].units).to.equal(0.4)
+          done()
+        }, 100)
+      })
+    })
+    describe('loadTickersByBase', () => {
+      it('should set to tickers when it call', done => {
+        vm.loadTickersByBase('BTC')
+        setTimeout(() => {
+          expect(vm.tickers.ETH.bid).to.equal(0.06888222)
           done()
         }, 100)
       })

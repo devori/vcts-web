@@ -25,7 +25,7 @@
           <template slot="items" scope="props">
             <td class="text-xs-center">{{ props.item.vcType }}</td>
             <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
-            <td class="text-xs-right">{{ props.item.rate.toFixed(8) }}</td>
+            <td :class="{'text-xs-right': true, 'red--text': props.item.change > 1, 'blue--text': props.item.change < 1 }">{{ props.item.rate.toFixed(8) }}({{props.item.change}})</td>
             <td class="text-xs-right">{{ props.item.total.toFixed(8) }}</td>
           </template>
         </v-data-table>
@@ -38,10 +38,12 @@
   export default {
     mounted () {
       this.loadAssetsByBase(this.bases[0])
+      this.loadTickersByBase(this.bases[0])
     },
     data () {
       return {
         assets: [],
+        tickers: {},
         active: ''
       }
     },
@@ -74,6 +76,14 @@
           sum.total += a.units * a.rate
           return sum
         }, { vcType: 'Summary', units: 0, rate: 0, total: 0 }))
+        result.forEach(a => {
+          if (!this.tickers[a.vcType]) {
+            a.change = 0.00
+            return
+          }
+          a.change = a.rate / this.tickers[a.vcType].bid
+          a.change = Math.trunc(a.change * 100) / 100
+        })
         return result
       }
     },
@@ -81,6 +91,11 @@
       loadAssetsByBase (base) {
         axios.get(`/private/markets/poloniex/assets/${base}`).then(res => {
           this.assets = res.data
+        }).catch(() => {})
+      },
+      loadTickersByBase (base) {
+        axios.get(`/private/markets/poloniex/tickers/${base}`).then(res => {
+          this.tickers = res.data
         }).catch(() => {})
       }
     }

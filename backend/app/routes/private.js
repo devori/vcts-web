@@ -47,6 +47,22 @@ router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
   }).pipe(res)
 });
 
+router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
+  let { market, base, vcType } = req.params;
+  let url = `${VCTS_API_URL}/public/markets/${market}/tickers`
+  if (base) {
+    url += `/${base}`
+    if (vcType) {
+      url += `/${vcType}`
+    }
+  }
+
+  request({
+    url,
+    method: 'GET'
+  }).pipe(res)
+});
+
 router.delete('/session', (req, res) => {
   req.session.destroy(err => {
     if (err) res.status(500);
