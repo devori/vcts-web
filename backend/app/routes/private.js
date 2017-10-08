@@ -16,13 +16,17 @@ router.all('*', (req, res, next) => {
   next();
 });
 
-router.get('/markets/:market/assets', (req, res) => {
+router.get('/markets/:market/assets/:base?', (req, res) => {
   let username = req.session.username;
   let market = req.params.market;
+  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets`
+  if (req.params.base) {
+    url += `/${req.params.base}`
+  }
 
   request({
+    url,
     method: 'GET',
-    url: `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets`
   }, (err, vctsRes, body) => {
     if (err) {
       res.status(500).json({

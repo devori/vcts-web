@@ -18,15 +18,15 @@
       <v-card flat>
         <v-data-table
             :headers="headers"
-            :items="listByBase(base)"
-            :pagination="{ rowsPerPage: -1 }"
+            :items="listAssets"
+            hide-actions
             class="elevation-1 text-xs-center"
           >
           <template slot="items" scope="props">
             <td class="text-xs-center">{{ props.item.vcType }}</td>
-            <td class="text-xs-right">{{ props.item.units }}</td>
-            <td class="text-xs-right">{{ props.item.price }}</td>
-            <td class="text-xs-center">{{ props.item.units * props.item.price }}</td>
+            <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
+            <td class="text-xs-right">{{ props.item.rate.toFixed(8) }}</td>
+            <td class="text-xs-right">{{ props.item.total.toFixed(8) }}</td>
           </template>
         </v-data-table>
       </v-card>
@@ -37,62 +37,51 @@
   import axios from 'axios'
   export default {
     mounted () {
-      this.loadAssets()
+      this.loadAssetsByBase(this.bases[0])
     },
     data () {
       return {
-        headers: [
-          { text: 'Coin', value: 'vcTye' },
-          { text: 'Units', value: 'units' },
-          { text: 'Price', value: 'price' },
-          { text: 'Total', value: 'total' }
-        ],
-        assets: {},
+        assets: [],
         active: ''
       }
     },
+    filters: {
+    },
     computed: {
       bases () {
+        return ['BTC']
+      },
+      headers () {
+        return [
+          { text: 'Coin', value: 'vcTye' },
+          { text: 'Units', value: 'units' },
+          { text: 'Rate', value: 'rate' },
+          { text: 'Estimated Value', value: 'total' }
+        ]
+      },
+      listAssets () {
         let result = []
-        for (let base in this.assets) {
-          result.push(base)
+        for (let vcType in this.assets) {
+          result.push(this.assets[vcType].reduce((acc, a) => {
+            acc.total = acc.units * acc.rate + a.units * a.rate
+            acc.units += a.units
+            acc.rate = acc.total / acc.units
+            return acc
+          }, { vcType, units: 0, rate: 0 }))
         }
-        result.sort((k1, k2) => k1 < k2 ? -1 : 1)
-        for (let i = result.length - 1; i > 0; i--) {
-          if (result[i - 1] === result[i]) {
-            result.splice(i, 1)
-          }
-        }
+        result.sort((a1, a2) => a1.vcType < a2.vcType ? -1 : 1)
+        result.push(result.reduce((sum, a) => {
+          sum.total += a.units * a.rate
+          return sum
+        }, { vcType: 'Summary', units: 0, rate: 0, total: 0 }))
         return result
-      }
-    },
-    watch: {
-      bases (newValue, oldValue) {
-        if (newValue.length > 0) {
-          this.$nextTick(() => {
-            this.active = 'assets-tab-0'
-          })
-        }
       }
     },
     methods: {
-      loadAssets () {
-        axios.get('/private/markets/poloniex/assets').then(res => {
-          for (let k in res.data.result) {
-            this.$set(this.assets, k, res.data.result[k])
-          }
-        }).catch(err => {
-          if (err.response.status === 401) {
-            this.$store.dispatch('logout')
-          }
-        })
-      },
-      listByBase (base) {
-        let result = []
-        for (let k in this.assets[base]) {
-          result.push(...this.assets[base][k])
-        }
-        return result
+      loadAssetsByBase (base) {
+        axios.get(`/private/markets/poloniex/assets/${base}`).then(res => {
+          this.assets = res.data.result
+        }).catch(() => {})
       }
     }
   }

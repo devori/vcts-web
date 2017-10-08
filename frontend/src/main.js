@@ -23,6 +23,13 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+axios.interceptors.response.use(res => {
+  if (res.data.code === 401) {
+    this.$store.dispatch('logout')
+  }
+  return res
+})
+
 /* eslint-disable no-new */
 new Vue({
   router,

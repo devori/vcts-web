@@ -4,56 +4,27 @@ import Assets from '@/containers/Assets'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 
-describe('Assets.vue', function () {
-  const ASSETS = {
-    'USDT': {
-      'DASH': [
-        {
-          'base': 'USDT',
-          'vcType': 'DASH',
-          'units': 1,
-          'price': 300,
-          'timestamp': 123,
-          'uuid': '265dac7d-1aaa-46b0-9f46-6dac2f45f44f'
-        }
-      ],
-      'BTC': [
-        {
-          'base': 'USDT',
-          'vcType': 'BTC',
-          'units': 0.4,
-          'price': 2500,
-          'timestamp': 123,
-          'uuid': '265dac7d-1aaa-46b0-9f46-6dac2f45f44f'
-        }
-      ]
-    },
-    'BTC': {
-      'ETH': [
-        {
-          'base': 'BTC',
-          'vcType': 'ETH',
-          'units': 1,
-          'price': 0.1,
-          'timestamp': 123,
-          'uuid': '265dac7d-1aaa-46b0-9f46-6dac2f45f44f'
-        }
-      ]
-    }
-  }
+describe('containers/Assets', function () {
   let vm
   let mockAxios
   before(() => {
+    mockAxios = new MockAdapter(axios)
+    mockAxios.onGet('/private/markets/poloniex/assets/BTC').reply(200, {
+      status: 'success',
+      result: {
+        BTC: [
+          {
+            base: 'BTC',
+            vcType: 'BTC',
+            units: 0.4,
+            rate: 1
+          }
+        ]
+      }
+    })
     Vue.use(Vuetify)
     const Constructor = Vue.extend(Assets)
     vm = new Constructor().$mount()
-    vm.assets = ASSETS
-
-    mockAxios = new MockAdapter(axios)
-    mockAxios.onGet('/private/markets/poloniex/assets').reply(200, {
-      status: 'success',
-      result: ASSETS
-    })
   })
   after(() => {
     mockAxios.restore()
@@ -61,25 +32,65 @@ describe('Assets.vue', function () {
   describe('computed', () => {
     it('should return sorted bases array when bases', () => {
       let bases = vm.bases
-      expect(bases.length).to.equal(2)
+      expect(bases.length).to.equal(1)
       expect(bases[0]).to.equal('BTC')
-      expect(bases[1]).to.equal('USDT')
+    })
+    describe('listAssets', () => {
+      before(() => {
+        vm.assets = {
+          'ETH': [
+            {
+              'base': 'BTC',
+              'vcType': 'ETH',
+              'units': 1,
+              'rate': 0.1
+            },
+            {
+              'base': 'BTC',
+              'vcType': 'ETH',
+              'units': 1,
+              'rate': 0.2
+            }
+          ],
+          'BTC': [
+            {
+              base: 'BTC',
+              vcType: 'BTC',
+              units: 0.4,
+              rate: 1
+            }
+          ]
+        }
+      })
+      it('should return summary at last of array when it call', () => {
+        let arr = vm.listAssets
+        expect(arr[0].vcType).to.equal('BTC')
+      })
+      it('should return sorted array by asc when it call', () => {
+        let arr = vm.listAssets
+        expect(arr.length).to.equal(3)
+        expect(arr[0].vcType).to.equal('BTC')
+        expect(arr[1].vcType).to.equal('ETH')
+      })
+      it('should return array of asset that has sum of units and average of rate when it call', () => {
+        let arr = vm.listAssets
+        expect(arr.length).to.equal(3)
+        expect(arr[0].units.toFixed(1)).to.equal('0.4')
+        expect(arr[0].rate).to.equal(1)
+        expect(arr[1].units).to.equal(2)
+        expect(arr[1].rate.toFixed(2)).to.equal('0.15')
+      })
     })
   })
   describe('methods', () => {
-    it('should load assets when page mount', done => {
-      vm.assets = []
-      vm.loadAssets()
-      setTimeout(() => {
-        expect(vm.assets.USDT).to.exist
-        expect(vm.assets.BTC).to.exist
-        done()
-      }, 1000)
-      this.timeout(3000)
-    })
-    it('should return array matched base when listByBase', () => {
-      let list = vm.listByBase('USDT')
-      expect(list.length).to.equal(2)
+    describe('loadAssetsByBase', () => {
+      it('should set to assets when it call', done => {
+        vm.loadAssetsByBase('BTC')
+        setTimeout(() => {
+          expect(vm.assets.BTC[0].units).to.equal(0.4)
+          done()
+        }, 100)
+      })
     })
   })
 })
