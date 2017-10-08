@@ -26,20 +26,25 @@ router.get('/markets/:market/assets/:base?', (req, res) => {
 
   request({
     url,
-    method: 'GET',
-  }, (err, vctsRes, body) => {
-    if (err) {
-      res.status(500).json({
-        status: 'failure',
-        result: 'Failure'
-      });
-      return;
+    method: 'GET'
+  }).pipe(res);
+});
+
+router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
+  let username = req.session.username;
+  let { market, base, vcType } = req.params;
+  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/histories`
+  if (base) {
+    url += `/${base}`
+    if (vcType) {
+      url += `/${vcType}`
     }
-    res.json({
-      status: 'success',
-      result: JSON.parse(body)
-    });
-  });
+  }
+
+  request({
+    url,
+    method: 'GET'
+  }).pipe(res)
 });
 
 router.delete('/session', (req, res) => {

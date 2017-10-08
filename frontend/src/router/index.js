@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/containers/Login'
 import Main from '@/containers/Main'
+import History from '@/containers/History'
 import Assets from '@/containers/Assets'
 
 Vue.use(Router)
@@ -23,6 +24,10 @@ export default new Router({
         {
           path: 'assets',
           component: Assets
+        },
+        {
+          path: 'history',
+          component: History
         }
       ]
     }

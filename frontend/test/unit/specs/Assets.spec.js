@@ -10,17 +10,14 @@ describe('containers/Assets', function () {
   before(() => {
     mockAxios = new MockAdapter(axios)
     mockAxios.onGet('/private/markets/poloniex/assets/BTC').reply(200, {
-      status: 'success',
-      result: {
-        BTC: [
-          {
-            base: 'BTC',
-            vcType: 'BTC',
-            units: 0.4,
-            rate: 1
-          }
-        ]
-      }
+      BTC: [
+        {
+          base: 'BTC',
+          vcType: 'BTC',
+          units: 0.4,
+          rate: 1
+        }
+      ]
     })
     Vue.use(Vuetify)
     const Constructor = Vue.extend(Assets)

@@ -44,8 +44,8 @@
           },
           {
             icon: 'list',
-            title: 'Temp',
-            path: '/main/temp'
+            title: 'History',
+            path: '/main/history'
           }
         ]
       }
