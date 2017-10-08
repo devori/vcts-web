@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container class="white white--text">
     <v-snackbar
       :timeout="3000"
       :error="true"
@@ -10,13 +10,13 @@
       {{ snacbar.message }}
       <v-btn light flat @click.native="snacbar.show = false">Close</v-btn>
     </v-snackbar>
-    <v-card>
-      <v-card-row class="indigo darken-1">
+    <v-card class="elevation-10">
+      <v-toolbar class="elevation-0">
         <v-card-title>
-          <span class="white--text">Login</span>
+          <span>Login</span>
           <v-spacer></v-spacer>
         </v-card-title>
-      </v-card-row>
+      </v-toolbar>
       <v-card-text>
         <v-container fluid>
           <v-layout row>
