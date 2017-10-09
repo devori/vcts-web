@@ -17,7 +17,13 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login' && store.state.username) {
     next('/main/assets')
   } else if (to.path.startsWith('/main') && !store.state.username) {
-    next('/login')
+    store.dispatch('updateSession').then(username => {
+      if (!username) {
+        next('/login')
+      } else {
+        next()
+      }
+    })
   } else {
     next()
   }

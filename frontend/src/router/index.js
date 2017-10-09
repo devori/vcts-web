@@ -4,6 +4,7 @@ import Login from '@/containers/Login'
 import Main from '@/containers/Main'
 import History from '@/containers/History'
 import Assets from '@/containers/Assets'
+import AutoTrader from '@/containers/AutoTrader'
 
 Vue.use(Router)
 
@@ -28,6 +29,10 @@ export default new Router({
         {
           path: 'history',
           component: History
+        },
+        {
+          path: 'auto-trader',
+          component: AutoTrader
         }
       ]
     }

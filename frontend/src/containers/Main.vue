@@ -46,6 +46,11 @@
             icon: 'list',
             title: 'History',
             path: '/main/history'
+          },
+          {
+            icon: 'desktop_windows',
+            title: 'Auto Trader',
+            path: '/main/auto-trader'
           }
         ]
       }
@@ -64,11 +69,10 @@
       onClickLogout () {
         axios.delete('/private/session').then(() => {
           this.$store.dispatch('logout')
+        }).then(m => {
           this.$router.replace('/')
-        }).catch(err => {
-          if (err.response.status === 401) {
-            this.$router.replace('/')
-          }
+        }).catch(() => {
+          this.$router.replace('/')
         })
       }
     }

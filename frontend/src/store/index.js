@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -13,6 +14,15 @@ export default new Vuex.Store({
     },
     logout ({ commit }) {
       commit('logout')
+    },
+    updateSession ({ commit }) {
+      return axios.get('/public/session').then(res => {
+        commit('login', res.data.username)
+        return res.data.username
+      }).catch(() => {
+        commit('logout')
+        return null
+      })
     }
   },
   mutations: {

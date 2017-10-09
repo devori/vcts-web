@@ -24,10 +24,7 @@ router.post('/users', (req, res) => {
 router.get('/session', (req, res) => {
   if (req.session.username) {
     res.json({
-      status: 'success',
-      result: {
-        username: req.session.username
-      }
+      username: req.session.username
     })
   } else {
     res.status(404).json({

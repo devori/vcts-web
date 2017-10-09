@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const request = require('request');
 const crypto = require('../util/crypto');
-const { VCTS_API_URL } = require('../properties');
+const { VCTS_API_URL, VCTS_AT_API_URL } = require('../properties');
 
 router.all('*', (req, res, next) => {
   let username = req.session.username;
@@ -62,6 +62,27 @@ router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
     method: 'GET'
   }).pipe(res)
 });
+
+router.get('/auto-traders', (req, res) => {
+  let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders`;
+  request({url, method: 'GET'}).pipe(res);
+})
+
+router.post('/auto-traders/:name', (req, res) => {
+  if (req.params.name !== 'poloniex') {
+    throw 'not supported'
+  }
+  let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/poloniex`;
+  request({url, method: 'POST'}).pipe(res);
+})
+
+router.delete('/auto-traders/:name', (req, res) => {
+  if (req.params.name !== 'poloniex') {
+    throw 'not supported'
+  }
+  let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/poloniex`;
+  request({url, method: 'DELETE'}).pipe(res);
+})
 
 router.delete('/session', (req, res) => {
   req.session.destroy(err => {

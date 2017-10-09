@@ -71,14 +71,6 @@
         }
       }
     },
-    mounted () {
-      if (!this.$store.state.username) {
-        axios.get('/public/session').then(res => {
-          this.$store.dispatch('login', res.data.result.username)
-          this.$router.replace('/main/assets')
-        }).catch(() => {})
-      }
-    },
     methods: {
       onClickLogin () {
         let username = this.username

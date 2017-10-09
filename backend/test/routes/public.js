@@ -22,7 +22,7 @@ describe('routes/public', function () {
     }).returns(Promise.resolve({ username: USERNAME }));
 
     sinon.stub(account, 'findByUsername').withArgs(USERNAME).returns({
-      password: 'a17dc62b00435621bb222098732e5901dbfcd571dad906dbbc36ad5f479ab29f860b0fc4bcde10bc80f8d057c0f52bcc40ae043ecd095e0fe1114ee7e73a354c'
+      password: '4e7cb3587212f15ff21005981af212b33fcbfa51469c807d226efece0c4f5708cd9c83cf20bac3a5124abec10fe53a22ab1db8530d1cf05121d4bfd059fb0ae4'
     });
 
     app = express();
