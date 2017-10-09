@@ -23,9 +23,9 @@
           >
           <template slot="items" scope="props">
             <td class="text-xs-center">{{ props.item.vcType }}</td>
-            <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
-            <td class="text-xs-right">{{ props.item.rate.toFixed(8) }}</td>
-            <td class="text-xs-right">{{ (props.item.units * props.item.rate).toFixed(8) }}</td>
+            <td class="text-xs-right">{{ props.item.units }}</td>
+            <td class="text-xs-right">{{ props.item.rate }}</td>
+            <td class="text-xs-right">{{ (props.item.units * props.item.rate) }}</td>
             <td class="text-xs-center">{{ new Date(props.item.timestamp).toLocaleString() }}</td>
           </template>
         </v-data-table>
@@ -53,7 +53,7 @@
       },
       headers () {
         return [
-          { text: 'Coin', value: 'vcTye' },
+          { text: 'Coin', value: 'vcType' },
           { text: 'Units', value: 'units' },
           { text: 'Rate', value: 'rate' },
           { text: 'Estimated Value', value: 'total' },
@@ -65,7 +65,6 @@
         for (let vcType in this.histories) {
           this.histories[vcType].forEach(h => result.push(h))
         }
-        result.sort((h1, h2) => h1.timestamp - h2.timestamp)
         return result
       }
     },

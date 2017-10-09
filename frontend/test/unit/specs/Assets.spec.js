@@ -68,23 +68,13 @@ describe('containers/Assets', function () {
           ]
         }
       })
-      it('should return summary at last of array when it call', () => {
-        let arr = vm.listAssets
-        expect(arr[0].vcType).to.equal('BTC')
-      })
-      it('should return sorted array by asc when it call', () => {
-        let arr = vm.listAssets
-        expect(arr.length).to.equal(3)
-        expect(arr[0].vcType).to.equal('BTC')
-        expect(arr[1].vcType).to.equal('ETH')
-      })
       it('should return array of asset that has sum of units and average of rate when it call', () => {
         let arr = vm.listAssets
         expect(arr.length).to.equal(3)
-        expect(arr[0].units.toFixed(1)).to.equal('0.4')
-        expect(arr[0].rate).to.equal(1)
-        expect(arr[1].units).to.equal(2)
-        expect(arr[1].rate.toFixed(2)).to.equal('0.15')
+        expect(arr[0].units).to.equal(2)
+        expect(arr[0].rate.toFixed(2)).to.equal('0.15')
+        expect(arr[1].units.toFixed(1)).to.equal('0.4')
+        expect(arr[1].rate).to.equal(1)
       })
       it('should return array that included bid when it call', () => {
         let arr = vm.listAssets

@@ -55,7 +55,7 @@
       },
       headers () {
         return [
-          { text: 'Coin', value: 'vcTye' },
+          { text: 'Coin', value: 'vcType' },
           { text: 'Units', value: 'units' },
           { text: 'Rate', value: 'rate' },
           { text: 'Estimated Value', value: 'total' }
@@ -71,7 +71,6 @@
             return acc
           }, { vcType, units: 0, rate: 0 }))
         }
-        result.sort((a1, a2) => a1.vcType < a2.vcType ? -1 : 1)
         result.push(result.reduce((sum, a) => {
           sum.total += a.units * a.rate
           return sum
