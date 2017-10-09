@@ -80,7 +80,7 @@
             a.change = 0.00
             return
           }
-          a.change = a.rate / this.tickers[a.vcType].bid
+          a.change = this.tickers[a.vcType].bid / a.rate
           a.change = Math.trunc(a.change * 100) / 100
         })
         return result
