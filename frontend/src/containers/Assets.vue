@@ -25,7 +25,7 @@
           <template slot="items" scope="props">
             <td class="text-xs-center">{{ props.item.vcType }}</td>
             <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
-            <td :class="{'text-xs-right': true, 'red--text': props.item.change > 1, 'blue--text': props.item.change < 1 }">{{ props.item.rate.toFixed(8) }}({{props.item.change}})</td>
+            <td :class="{'text-xs-right': true, 'red--text': props.item.change > 1, 'blue--text': props.item.change < 1 }">{{ props.item.ticker.toFixed(8) }}({{props.item.change}})</td>
             <td class="text-xs-right">{{ props.item.total.toFixed(8) }}</td>
           </template>
         </v-data-table>
@@ -71,18 +71,21 @@
             return acc
           }, { vcType, units: 0, rate: 0 }))
         }
-        result.push(result.reduce((sum, a) => {
-          sum.total += a.units * a.rate
-          return sum
-        }, { vcType: 'Summary', units: 0, rate: 0, total: 0 }))
         result.forEach(a => {
           if (!this.tickers[a.vcType]) {
             a.change = 0.00
+            a.ticker = 0.00
             return
           }
-          a.change = this.tickers[a.vcType].bid / a.rate
+          a.ticker = this.tickers[a.vcType].bid
+          a.change = a.ticker / a.rate
           a.change = Math.trunc(a.change * 100) / 100
+          a.total = a.units * a.ticker
         })
+        result.push(result.reduce((sum, a) => {
+          sum.total += a.total
+          return sum
+        }, { vcType: 'Summary', units: 0, rate: 0, ticker: 0, total: 0 }))
         return result
       }
     },
