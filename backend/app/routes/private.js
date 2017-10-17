@@ -27,7 +27,13 @@ router.get('/markets/:market/assets/:base?', (req, res) => {
   request({
     url,
     method: 'GET'
-  }).pipe(res);
+  }, (err, vctsRes, body) => {
+    if (err) {
+      res.status(500).send(body);
+      return;
+    }
+    res.send(body);
+  });
 });
 
 router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
@@ -44,7 +50,13 @@ router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
   request({
     url,
     method: 'GET'
-  }).pipe(res)
+  }, (err, vctsRes, body) => {
+    if (err) {
+      res.status(500).send(body);
+      return;
+    }
+    res.send(body);
+  });
 });
 
 router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
@@ -60,12 +72,24 @@ router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
   request({
     url,
     method: 'GET'
-  }).pipe(res)
+  }, (err, vctsRes, body) => {
+    if (err) {
+      res.status(500).send(body);
+      return;
+    }
+    res.send(body);
+  });
 });
 
 router.get('/auto-traders', (req, res) => {
   let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders`;
-  request({url, method: 'GET'}).pipe(res);
+  request({url, method: 'GET'}, (err, vctsRes, body) => {
+    if (err) {
+      res.status(500).send(body);
+      return;
+    }
+    res.send(body);
+  });
 })
 
 router.post('/auto-traders/:name', (req, res) => {
@@ -73,7 +97,13 @@ router.post('/auto-traders/:name', (req, res) => {
     throw 'not supported'
   }
   let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/poloniex`;
-  request({url, method: 'POST'}).pipe(res);
+  request({url, method: 'POST'}, (err, vctsRes, body) => {
+    if (err) {
+      res.status(500).send(body);
+      return;
+    }
+    res.sendStatus(201);
+  });
 })
 
 router.delete('/auto-traders/:name', (req, res) => {
@@ -81,7 +111,13 @@ router.delete('/auto-traders/:name', (req, res) => {
     throw 'not supported'
   }
   let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/poloniex`;
-  request({url, method: 'DELETE'}).pipe(res);
+  request({url, method: 'DELETE'}, (err, vctsRes, body) => {
+    if (err) {
+      res.status(500).send(body);
+      return;
+    }
+    res.sendStatus(200);
+  });
 })
 
 router.delete('/session', (req, res) => {
