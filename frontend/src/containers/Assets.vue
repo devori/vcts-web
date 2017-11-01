@@ -24,9 +24,9 @@
           >
           <template slot="items" scope="props">
             <td class="text-xs-center">{{ props.item.vcType }}</td>
-            <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
-            <td :class="{'text-xs-right': true, 'red--text': props.item.change > 1, 'blue--text': props.item.change < 1 }">{{ props.item.ticker.toFixed(8) }}({{props.item.change}})</td>
             <td class="text-xs-right">{{ props.item.total.toFixed(8) }}</td>
+            <td :class="{'text-xs-right': true, 'red--text': props.item.change > 1, 'blue--text': props.item.change < 1 }">{{ props.item.ticker.toFixed(8) }}({{props.item.change}})</td>
+            <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
           </template>
         </v-data-table>
       </v-card>
@@ -56,9 +56,9 @@
       headers () {
         return [
           { text: 'Coin', value: 'vcType' },
-          { text: 'Units', value: 'units' },
+          { text: 'Estimated Value', value: 'total' },
           { text: 'Rate', value: 'rate' },
-          { text: 'Estimated Value', value: 'total' }
+          { text: 'Units', value: 'units' }
         ]
       },
       listAssets () {
