@@ -1,12 +1,12 @@
 <template>
   <div>
-    <v-navigation-drawer light v-model="showDrawer">
+    <v-navigation-drawer light absolute v-model="showDrawer">
       <v-toolbar flat light>
         <v-toolbar-title>VCTS</v-toolbar-title>
       </v-toolbar>
       <v-divider></v-divider>
       <v-list dense class="pt-0">
-        <v-list-tile v-for="m in menus" @click.native.stop="movePage(m.path)">
+        <v-list-tile v-for="m in menus" :key="m.title" @click="movePage(m.path)">
           <v-list-tile-action>
             <v-icon>{{ m.icon }}</v-icon>
           </v-list-tile-action>
@@ -16,10 +16,11 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar light>
-      <v-toolbar-side-icon light @click.native.stop="showDrawer = !showDrawer"></v-toolbar-side-icon>
-      <v-toolbar-title light>{{ title }}</v-toolbar-title>
-      <v-btn light flat @click.native="onClickLogout">
+    <v-toolbar dark color="primary">
+      <v-toolbar-side-icon @click="showDrawer = !showDrawer"></v-toolbar-side-icon>
+      <v-toolbar-title>{{ title }}</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn flat @click.native="onClickLogout">
         Logout
       </v-btn>
     </v-toolbar>

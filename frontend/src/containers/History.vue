@@ -1,40 +1,22 @@
 <template>
-  <v-tabs light fixed centered v-model="active">
-    <v-tabs-bar slot="activators" class="indigo">
-      <v-tabs-slider class="yellow"></v-tabs-slider>
-      <v-tabs-item
-        v-for="(base, index) in bases"
-        :key="index"
-        :href="'#histories-tab-' + index"
+  <v-card flat>
+    <v-data-table
+        :headers="headers"
+        :items="listHistories"
+        :pagination.sync="pagination"
+        class="elevation-1 text-xs-center"
       >
-        {{ base }}
-      </v-tabs-item>
-    </v-tabs-bar>
-    <v-tabs-content
-      v-for="(base, index) in bases"
-      :key="index"
-      :id="'histories-tab-' + index"
-    >
-      <v-card flat>
-        <v-data-table
-            :headers="headers"
-            :items="listHistories"
-            :pagination.sync="pagination"
-            class="elevation-1 text-xs-center"
-          >
-          <template slot="items" scope="props">
-            <td class="text-xs-center">{{ props.item.vcType }}</td>
-            <td class="text-xs-center">{{ props.item.type }}</td>
-            <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
-            <td v-if="props.item.type !== 'sell'" class="text-xs-right">{{ props.item.rate }}</td>
-            <td v-if="props.item.type === 'sell'" class="text-xs-right">{{ props.item.rate }}({{ props.item.buy }})</td>
-            <td class="text-xs-right">{{ (props.item.units * props.item.rate) }}</td>
-            <td class="text-xs-center">{{ new Date(props.item.timestamp).toLocaleString() }}</td>
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-tabs-content>
-  </v-tabs>
+      <template slot="items" scope="props">
+        <td class="text-xs-center">{{ props.item.vcType }}</td>
+        <td class="text-xs-center">{{ props.item.type }}</td>
+        <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
+        <td v-if="props.item.type !== 'sell'" class="text-xs-right">{{ props.item.rate }}</td>
+        <td v-if="props.item.type === 'sell'" class="text-xs-right">{{ props.item.rate }}({{ props.item.buy }})</td>
+        <td class="text-xs-right">{{ (props.item.units * props.item.rate) }}</td>
+        <td class="text-xs-center">{{ new Date(props.item.timestamp).toLocaleString() }}</td>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 <script>
   import axios from 'axios'

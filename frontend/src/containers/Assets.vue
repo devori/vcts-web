@@ -1,37 +1,24 @@
 <template>
-  <v-tabs light fixed centered v-model="active">
-    <v-tabs-bar slot="activators" class="indigo">
-      <v-tabs-slider class="yellow"></v-tabs-slider>
-      <v-tabs-item
-        v-for="(base, index) in bases"
-        :key="index"
-        :href="'#assets-tab-' + index"
+  <v-card flat>
+    <v-data-table
+        :headers="headers"
+        :items="listAssets"
+        hide-actions
+        class="elevation-1 text-xs-center"
       >
-        {{ base }}
-      </v-tabs-item>
-    </v-tabs-bar>
-    <v-tabs-content
-      v-for="(base, index) in bases"
-      :key="index"
-      :id="'assets-tab-' + index"
-    >
-      <v-card flat>
-        <v-data-table
-            :headers="headers"
-            :items="listAssets"
-            hide-actions
-            class="elevation-1 text-xs-center"
-          >
-          <template slot="items" scope="props">
-            <td class="text-xs-center">{{ props.item.vcType }}</td>
-            <td class="text-xs-right">{{ props.item.total.toFixed(8) }}</td>
-            <td :class="{'text-xs-right': true, 'red--text': props.item.change > 1, 'blue--text': props.item.change < 1 }">{{ props.item.ticker.toFixed(8) }}({{props.item.change}})</td>
-            <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-tabs-content>
-  </v-tabs>
+      <template slot="items" scope="props">
+        <td class="text-xs-center">{{ props.item.vcType }}</td>
+        <td class="text-xs-right">{{ props.item.total.toFixed(8) }}</td>
+        <td :class="{'text-xs-right': true, 'red--text': props.item.change > 1, 'blue--text': props.item.change < 1 }">{{ props.item.ticker.toFixed(8) }}({{props.item.change}})</td>
+        <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
+      </template>
+      <template slot="footer">
+        <td colspan="100%" class="title">
+          Total: {{ summary.total }}
+        </td>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 <script>
   import axios from 'axios'
@@ -61,6 +48,13 @@
           { text: 'Units', value: 'units' }
         ]
       },
+      summary () {
+        let result = this.listAssets
+        return result.reduce((sum, a) => {
+          sum.total += a.total
+          return sum
+        }, { total: 0 })
+      },
       listAssets () {
         let result = []
         for (let vcType in this.assets) {
@@ -82,10 +76,6 @@
           a.change = Math.trunc(a.change * 100) / 100
           a.total = a.units * a.ticker
         })
-        result.push(result.reduce((sum, a) => {
-          sum.total += a.total
-          return sum
-        }, { vcType: 'Summary', units: 0, rate: 0, ticker: 0, total: 0 }))
         return result
       }
     },

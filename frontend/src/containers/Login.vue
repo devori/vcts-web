@@ -1,5 +1,5 @@
 <template>
-  <v-container class="white white--text">
+  <v-container>
     <v-snackbar
       :timeout="3000"
       :error="true"
@@ -11,12 +11,9 @@
       <v-btn light flat @click.native="snacbar.show = false">Close</v-btn>
     </v-snackbar>
     <v-card class="elevation-10">
-      <v-toolbar class="elevation-0">
-        <v-card-title>
-          <span>Login</span>
-          <v-spacer></v-spacer>
-        </v-card-title>
-      </v-toolbar>
+      <v-card-title primary-title>
+        <div class="headline text--white">Login</div>
+      </v-card-title>
       <v-card-text>
         <v-container fluid>
           <v-layout row>
@@ -47,14 +44,14 @@
             <v-spacer></v-spacer>
           </v-layout>
           <v-layout row>
-            <v-btn block round primary light @click.native="onClickLogin">LOGIN</v-btn>
+            <v-btn color="primary" block round @click.native="onClickLogin">LOGIN</v-btn>
           </v-layout>
         </v-container>
       </v-card-text>
       <v-divider></v-divider>
-      <v-card-row actions>
+      <v-card-actions>
         <v-btn flat class="indigo--text darken-1" @click.native="onClickCreateAccount">Create Account</v-btn>
-      </v-card-row>
+      </v-card-actions>
     </v-card>
   </v-container>
 </template>
