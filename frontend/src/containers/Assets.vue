@@ -1,24 +1,45 @@
 <template>
-  <v-card flat>
-    <v-data-table
-        :headers="headers"
-        :items="listAssets"
-        hide-actions
-        class="elevation-1 text-xs-center"
-      >
-      <template slot="items" scope="props">
-        <td class="text-xs-center">{{ props.item.vcType }}</td>
-        <td class="text-xs-right">{{ props.item.total.toFixed(8) }}</td>
-        <td :class="{'text-xs-right': true, 'red--text': props.item.change > 1, 'blue--text': props.item.change < 1 }">{{ props.item.ticker.toFixed(8) }}({{props.item.change}})</td>
-        <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
-      </template>
-      <template slot="footer">
-        <td colspan="100%" class="title">
-          Total: {{ summary.total }}
-        </td>
-      </template>
-    </v-data-table>
-  </v-card>
+  <v-layout>
+    <v-flex xs12>
+      <v-alert color="info" :value="true" class="headline">
+        Total - {{ totalEstimation.toFixed(8) }}
+      </v-alert>
+      <v-list :two-line="true">
+        <v-list-group v-for="summary in listSummaries" :value="summary.vcType" :key="summary.vcType" class="elevation-1">
+          <v-list-tile slot="item" @click="">
+            <v-list-tile-action>
+              {{ summary.vcType }}
+            </v-list-tile-action>
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <span>{{ summary.estimation.toFixed(8) }}</span>
+                <span :class="{'text-xs-right': true, 'red--text': summary.change > 1, 'blue--text': summary.change < 1 }">({{ summary.change.toFixed(2) }})</span>
+              </v-list-tile-title>
+              <v-list-tile-sub-title>
+                Bid - {{ summary.ticker.toFixed(8) }}
+              </v-list-tile-sub-title>
+            </v-list-tile-content>
+            <v-list-tile-action v-if="summary.assets.length > 0">
+              <v-badge left>
+                <span slot="badge">{{ summary.assets.length }}</span>
+              </v-badge>
+            </v-list-tile-action>
+          </v-list-tile>
+          <v-list-tile v-for="asset in summary.assets" :key="asset.uuid" @click="">
+            <v-list-tile-content>
+              <v-list-tile-title>
+                <span class="text-xs-right">{{ asset.estimation.toFixed(8) }}</span>
+                <span :class="{'text-xs-right': true, 'red--text': asset.change > 1, 'blue--text': asset.change < 1 }">({{ asset.change.toFixed(2) }})</span>
+              </v-list-tile-title>
+              <v-list-tile-sub-title>
+                {{ asset.rate.toFixed(8) }} - {{ asset.units.toFixed(8) }}
+              </v-list-tile-sub-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list-group>
+      </v-list>
+    </v-flex>
+  </v-layout>
 </template>
 <script>
   import axios from 'axios'
@@ -34,48 +55,34 @@
         active: ''
       }
     },
-    filters: {
-    },
     computed: {
       bases () {
         return ['BTC']
       },
-      headers () {
-        return [
-          { text: 'Coin', value: 'vcType' },
-          { text: 'Estimated Value', value: 'total' },
-          { text: 'Rate', value: 'rate' },
-          { text: 'Units', value: 'units' }
-        ]
+      totalEstimation () {
+        return this.listSummaries.reduce((acc, s) => acc + s.estimation, 0)
       },
-      summary () {
-        let result = this.listAssets
-        return result.reduce((sum, a) => {
-          sum.total += a.total
-          return sum
-        }, { total: 0 })
-      },
-      listAssets () {
+      listSummaries () {
         let result = []
         for (let vcType in this.assets) {
-          result.push(this.assets[vcType].reduce((acc, a) => {
-            acc.total = acc.units * acc.rate + a.units * a.rate
-            acc.units += a.units
-            acc.rate = acc.total / acc.units
-            return acc
-          }, { vcType, units: 0, rate: 0 }))
-        }
-        result.forEach(a => {
-          if (!this.tickers[a.vcType]) {
-            a.change = 0.00
-            a.ticker = 0.00
-            return
+          let arr = this.assets[vcType]
+          let ticker = (this.tickers[vcType] && this.tickers[vcType].bid) || 0
+          let summary = {
+            vcType,
+            ticker,
+            estimation: arr.reduce((acc, a) => acc + a.units * ticker, 0),
+            units: arr.reduce((acc, a) => acc + a.units, 0),
+            rate: arr.reduce((acc, a) => acc + a.rate * a.units, 0) / arr.reduce((acc, a) => acc + a.units, 0),
+            assets: arr.map(a => ({
+              estimation: a.units * ticker,
+              change: ticker / a.rate,
+              rate: a.rate,
+              units: a.units
+            }))
           }
-          a.ticker = this.tickers[a.vcType].bid
-          a.change = a.ticker / a.rate
-          a.change = Math.trunc(a.change * 100) / 100
-          a.total = a.units * a.ticker
-        })
+          summary.change = ticker / summary.rate
+          result.push(summary)
+        }
         return result
       }
     },
