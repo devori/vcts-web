@@ -4,8 +4,19 @@
       <v-alert color="info" :value="true" class="headline">
         Total - {{ totalEstimation.toFixed(8) }}
       </v-alert>
+      <v-toolbar light>
+        <v-btn-toggle mandatory v-model="sort.target">
+          <v-btn value="estimation">Estimation</v-btn>
+          <v-btn value="vcType">Name</v-btn>
+        </v-btn-toggle>
+        <v-spacer></v-spacer>
+        <v-btn-toggle mandatory v-model="sort.direction">
+          <v-btn value="asc">ASC</v-btn>
+          <v-btn value="desc">DESC</v-btn>
+        </v-btn-toggle>
+      </v-toolbar>
       <v-list :two-line="true">
-        <v-list-group v-for="summary in listSummaries" :value="summary.vcType" :key="summary.vcType" class="elevation-1">
+        <v-list-group v-for="summary in listSortedSummaries" :value="summary.vcType" :key="summary.vcType" class="elevation-1">
           <v-list-tile slot="item" @click="">
             <v-list-tile-action>
               {{ summary.vcType }}
@@ -45,14 +56,18 @@
   import axios from 'axios'
   export default {
     mounted () {
-      this.loadAssetsByBase(this.bases[0])
       this.loadTickersByBase(this.bases[0])
+      this.loadAssetsByBase(this.bases[0])
     },
     data () {
       return {
         assets: [],
         tickers: {},
-        active: ''
+        active: '',
+        sort: {
+          target: 'estimation',
+          direction: 'desc'
+        }
       }
     },
     computed: {
@@ -61,6 +76,19 @@
       },
       totalEstimation () {
         return this.listSummaries.reduce((acc, s) => acc + s.estimation, 0)
+      },
+      listSortedSummaries () {
+        let result = this.listSummaries.slice(0)
+        result.sort((s1, s2) => {
+          let b = 0
+          if (s1[this.sort.target] < s2[this.sort.target]) {
+            b = -1
+          } else if (s1[this.sort.target] > s2[this.sort.target]) {
+            b = 1
+          }
+          return b * (this.sort.direction === 'asc' ? 1 : -1)
+        })
+        return result
       },
       listSummaries () {
         let result = []
@@ -83,18 +111,20 @@
           summary.change = ticker / summary.rate
           result.push(summary)
         }
+
         return result
       }
     },
     methods: {
       loadAssetsByBase (base) {
-        axios.get(`/private/markets/poloniex/assets/${base}`).then(res => {
+        return axios.get(`/private/markets/poloniex/assets/${base}`).then(res => {
           this.assets = res.data
         }).catch(() => {})
       },
       loadTickersByBase (base) {
-        axios.get(`/private/markets/poloniex/tickers/${base}`).then(res => {
+        return axios.get(`/private/markets/poloniex/tickers/${base}`).then(res => {
           this.tickers = res.data
+          this.tickers['BTC'] = { bid: 1 }
         }).catch(() => {})
       }
     }
