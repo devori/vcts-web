@@ -17,7 +17,7 @@
       </v-toolbar>
       <v-list :two-line="true">
         <v-list-group v-for="summary in listSortedSummaries" :value="summary.vcType" :key="summary.vcType" class="elevation-1">
-          <v-list-tile slot="item" @click="">
+          <v-list-tile slot="item" @click="onClickSummary(summary.vcType)">
             <v-list-tile-action>
               {{ summary.vcType }}
             </v-list-tile-action>
@@ -36,7 +36,10 @@
               </v-badge>
             </v-list-tile-action>
           </v-list-tile>
-          <v-list-tile v-for="asset in summary.assets" :key="asset.uuid" @click="">
+          <v-list-tile v-for="asset in summary.assets" :key="asset.uuid"  @click="onClickAsset(summary.vcType, asset.uuid)">
+            <v-list-tile-action>
+              <v-checkbox :input-value="selectedAssets.ids.find(uuid => uuid === asset.uuid)"></v-checkbox>
+            </v-list-tile-action>
             <v-list-tile-content>
               <v-list-tile-title>
                 <span class="text-xs-right">{{ asset.estimation.toFixed(8) }}</span>
@@ -50,6 +53,20 @@
         </v-list-group>
       </v-list>
     </v-flex>
+    <v-snackbar
+      :timeout="300000"
+      color="red lighten-1"
+      :value="showControlBox"
+    >
+      <v-btn left   dark flat :disabled="selectedAssets.ids.length <= 1">
+        <v-icon>call_merge</v-icon>
+        <span>Merge</span>
+      </v-btn>
+      <v-btn dark flat>
+        <v-icon>delete</v-icon>
+        <span>Remove</span>
+      </v-btn>
+    </v-snackbar>
   </v-layout>
 </template>
 <script>
@@ -67,6 +84,10 @@
         sort: {
           target: 'estimation',
           direction: 'desc'
+        },
+        selectedAssets: {
+          vcType: '',
+          ids: []
         }
       }
     },
@@ -102,6 +123,7 @@
             units: arr.reduce((acc, a) => acc + a.units, 0),
             rate: arr.reduce((acc, a) => acc + a.rate * a.units, 0) / arr.reduce((acc, a) => acc + a.units, 0),
             assets: arr.map(a => ({
+              uuid: a.uuid,
               estimation: a.units * ticker,
               change: ticker / a.rate,
               rate: a.rate,
@@ -113,6 +135,9 @@
         }
 
         return result
+      },
+      showControlBox () {
+        return this.selectedAssets.ids.length > 0
       }
     },
     methods: {
@@ -126,6 +151,29 @@
           this.tickers = res.data
           this.tickers['BTC'] = { bid: 1 }
         }).catch(() => {})
+      },
+      onClickAsset (vcType, id) {
+        if (this.selectedAssets.vcType === vcType) {
+          if (this.selectedAssets.ids.find(aid => aid === id)) {
+            this.selectedAssets.ids = this.selectedAssets.ids.filter(aid => aid !== id)
+          } else {
+            this.selectedAssets.ids = [...this.selectedAssets.ids, id]
+          }
+        } else {
+          this.selectedAssets = {
+            vcType,
+            ids: [id]
+          }
+        }
+      },
+      onClickSummary (vcType) {
+        if (this.selectedAssets.vcType === vcType) {
+          return
+        }
+        this.selectedAssets = {
+          vcType,
+          ids: []
+        }
       }
     }
   }

@@ -11,10 +11,10 @@
         <v-card-text v-if="info.status === 'running'">
           Interval: {{ info.interval / 1000 }} sec
         </v-card-text>
-        <v-card-row actions>
+        <v-card-actions>
           <v-btn v-if="info.status === 'stop'" class="elevation-5" @click.native.stop="startAutoTrader(key)">Start</v-btn>
           <v-btn v-if="info.status === 'running'" class="elevation-5" @click.native.stop="stopAutoTrader(key)">Stop</v-btn>
-        </v-card-row>
+        </v-card-actions>
       </v-card>
     </v-flex>
   </v-layout>

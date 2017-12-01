@@ -41,7 +41,7 @@ describe('containers/Assets', function () {
       expect(bases.length).to.equal(1)
       expect(bases[0]).to.equal('BTC')
     })
-    describe('listAssets', () => {
+    describe('listSummaries', () => {
       before(() => {
         vm.assets = {
           'ETH': [
@@ -69,16 +69,32 @@ describe('containers/Assets', function () {
         }
       })
       it('should return array of asset that has sum of units and average of rate when it call', () => {
-        let arr = vm.listAssets
-        expect(arr.length).to.equal(3)
+        let arr = vm.listSummaries
+        expect(arr.length).to.equal(2)
         expect(arr[0].units).to.equal(2)
         expect(arr[0].rate.toFixed(2)).to.equal('0.15')
         expect(arr[1].units.toFixed(1)).to.equal('0.4')
         expect(arr[1].rate).to.equal(1)
       })
       it('should return array that included bid when it call', () => {
-        let arr = vm.listAssets
+        let arr = vm.listSummaries
         expect(arr[1].change).to.exist
+      })
+    })
+    describe('showControlBox', () => {
+      it('return true when selectedAssets.ids.length > 0', () => {
+        vm.selectedAssets = {
+          vcType: 'BTC',
+          ids: [1]
+        }
+        expect(vm.showControlBox).to.be.true
+      })
+      it('return false when selectedAssets.ids.length === 0', () => {
+        vm.selectedAssets = {
+          vcType: 'BTC',
+          ids: []
+        }
+        expect(vm.showControlBox).to.be.false
       })
     })
   })
@@ -99,6 +115,58 @@ describe('containers/Assets', function () {
           expect(vm.tickers.ETH.bid).to.equal(0.06888222)
           done()
         }, 100)
+      })
+    })
+    describe('onClickAsset', () => {
+      it('should be added asset to selectedAssets when it calls', () => {
+        vm.selectedAssets = {
+          vcType: 'BTC',
+          ids: ['1', '2', '3']
+        }
+        vm.onClickAsset('BTC', 'id-0')
+        expect(vm.selectedAssets.vcType).to.equal('BTC')
+        expect(vm.selectedAssets.ids.length).to.equal(4)
+        expect(vm.selectedAssets.ids[3]).to.equal('id-0')
+      })
+      it('should be initialize selectedAssets when vcType is not matched', () => {
+        vm.selectedAssets = {
+          vcType: 'ETH',
+          ids: ['1', '2', '3']
+        }
+        vm.onClickAsset('BTC', 'id-0')
+        expect(vm.selectedAssets.vcType).to.equal('BTC')
+        expect(vm.selectedAssets.ids.length).to.equal(1)
+        expect(vm.selectedAssets.ids[0]).to.equal('id-0')
+      })
+      it('should remove uuid when it already added', () => {
+        vm.selectedAssets = {
+          vcType: 'BTC',
+          ids: ['1', 'id-0']
+        }
+        vm.onClickAsset('BTC', 'id-0')
+        expect(vm.selectedAssets.vcType).to.equal('BTC')
+        expect(vm.selectedAssets.ids.length).to.equal(1)
+        expect(vm.selectedAssets.ids[0]).to.equal('1')
+      })
+    })
+    describe('onClickSummary', () => {
+      it('should not be changed when vcType is matched', () => {
+        vm.selectedAssets = {
+          vcType: 'ETH',
+          ids: ['1', '2', '3']
+        }
+        vm.onClickSummary('ETH')
+        expect(vm.selectedAssets.vcType).to.equal('ETH')
+        expect(vm.selectedAssets.ids.length).to.equal(3)
+      })
+      it('should be initialize selectedAssets when vcType is not matched', () => {
+        vm.selectedAssets = {
+          vcType: 'ETH',
+          ids: ['1', '2', '3']
+        }
+        vm.onClickSummary('BTC')
+        expect(vm.selectedAssets.vcType).to.equal('BTC')
+        expect(vm.selectedAssets.ids.length).to.equal(0)
       })
     })
   })
