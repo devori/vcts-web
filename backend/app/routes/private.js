@@ -36,6 +36,23 @@ router.get('/markets/:market/assets/:base?', (req, res) => {
   });
 });
 
+router.delete('/markets/:market/assets/:base/:vcType/:id', (req, res) => {
+  let username = req.session.username;
+  let { market, base, vcType, id } = req.params;
+  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets/${base}/${vcType}/${id}`
+
+  request({
+    url,
+    method: 'DELETE'
+  }, (err, vctsRes, body) => {
+    if (err) {
+      res.status(500).send(body);
+      return;
+    }
+    res.send(body);
+  });
+})
+
 router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
   let username = req.session.username;
   let { market, base, vcType } = req.params;

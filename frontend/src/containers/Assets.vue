@@ -62,7 +62,7 @@
         <v-icon>call_merge</v-icon>
         <span>Merge</span>
       </v-btn>
-      <v-btn dark flat>
+      <v-btn dark flat @click="onClickRemove">
         <v-icon>delete</v-icon>
         <span>Remove</span>
       </v-btn>
@@ -78,7 +78,7 @@
     },
     data () {
       return {
-        assets: [],
+        assets: {},
         tickers: {},
         active: '',
         sort: {
@@ -174,6 +174,22 @@
           vcType,
           ids: []
         }
+      },
+      onClickRemove () {
+        const base = this.bases[0]
+        const { vcType, ids } = this.selectedAssets
+        ids.reduce((prom, id) => {
+          return prom.then(() => {
+            return axios.delete(`/private/markets/poloniex/assets/${base}/${vcType}/${id}`)
+          })
+        }, Promise.resolve()).then(() => {
+          return this.loadAssetsByBase(this.bases[0])
+        }).then(() => {
+          this.selectedAssets = {
+            vcType: '',
+            ids: []
+          }
+        })
       }
     }
   }

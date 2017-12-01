@@ -28,6 +28,11 @@ describe('containers/Assets', function () {
         'timestamp': 1507474614729
       }
     })
+    mockAxios.onDelete('/private/markets/poloniex/assets/BTC/ETH/1').reply(200, Promise.resolve({
+      base: 'BTC',
+      vcType: 'ETH',
+      uuid: '1'
+    }))
     Vue.use(Vuetify)
     const Constructor = Vue.extend(Assets)
     vm = new Constructor().$mount()
@@ -167,6 +172,28 @@ describe('containers/Assets', function () {
         vm.onClickSummary('BTC')
         expect(vm.selectedAssets.vcType).to.equal('BTC')
         expect(vm.selectedAssets.ids.length).to.equal(0)
+      })
+    })
+    describe('onClickRemove', () => {
+      it('should reload assets when it calls', done => {
+        vm.assets = {}
+        vm.onClickRemove()
+        setTimeout(() => {
+          expect(vm.assets.BTC.length).to.equal(1)
+          done()
+        }, 100)
+      })
+      it('should reset selectedAssets when it calls', done => {
+        vm.selectedAssets = {
+          vcType: 'ETH',
+          ids: ['1']
+        }
+        vm.onClickRemove()
+        setTimeout(() => {
+          expect(vm.selectedAssets.vcType).to.equal('')
+          expect(vm.selectedAssets.ids.length).to.equal(0)
+          done()
+        }, 100)
       })
     })
   })
