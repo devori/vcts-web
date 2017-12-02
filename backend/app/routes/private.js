@@ -51,7 +51,29 @@ router.delete('/markets/:market/assets/:base/:vcType/:id', (req, res) => {
     }
     res.send(body);
   });
-})
+});
+
+router.put('/markets/:market/assets/:base/:vcType', (req, res) => {
+  const { username } = req.session;
+  const { market, base, vcType } = req.params;
+  const { mode } = req.query;
+  if (mode === 'merge') {
+    const { ids } = req.body;
+    request({
+      url: `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets/${base}/${vcType}`,
+      method: 'PUT',
+      qs: {mode: 'merge'},
+      json: true,
+      body: ids,
+    }, (err, vctsRes, body) => {
+      if (err) {
+        res.status(500).send(body);
+        return;
+      }
+      res.send(body);
+    })
+  }
+});
 
 router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
   let username = req.session.username;

@@ -33,6 +33,11 @@ describe('containers/Assets', function () {
       vcType: 'ETH',
       uuid: '1'
     }))
+    mockAxios.onPut('/private/markets/poloniex/assets/BTC/ETH?mode=merge').reply(200, Promise.resolve({
+      base: 'BTC',
+      vcType: 'ETH',
+      uuid: '1'
+    }))
     Vue.use(Vuetify)
     const Constructor = Vue.extend(Assets)
     vm = new Constructor().$mount()
@@ -189,6 +194,32 @@ describe('containers/Assets', function () {
           ids: ['1']
         }
         vm.onClickRemove()
+        setTimeout(() => {
+          expect(vm.selectedAssets.vcType).to.equal('')
+          expect(vm.selectedAssets.ids.length).to.equal(0)
+          done()
+        }, 100)
+      })
+    })
+    describe('onClickMerge', () => {
+      it('should reload assets when it calls', done => {
+        vm.selectedAssets = {
+          vcType: 'ETH',
+          ids: ['1', '2']
+        }
+        vm.assets = {}
+        vm.onClickMerge()
+        setTimeout(() => {
+          expect(vm.assets.BTC.length).to.equal(1)
+          done()
+        }, 100)
+      })
+      it('should reset selectedAssets when it calls', done => {
+        vm.selectedAssets = {
+          vcType: 'ETH',
+          ids: ['1', '2']
+        }
+        vm.onClickMerge()
         setTimeout(() => {
           expect(vm.selectedAssets.vcType).to.equal('')
           expect(vm.selectedAssets.ids.length).to.equal(0)

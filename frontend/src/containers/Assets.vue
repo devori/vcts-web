@@ -58,7 +58,7 @@
       color="red lighten-1"
       :value="showControlBox"
     >
-      <v-btn left   dark flat :disabled="selectedAssets.ids.length <= 1">
+      <v-btn dark flat :disabled="selectedAssets.ids.length <= 1" @click="onClickMerge">
         <v-icon>call_merge</v-icon>
         <span>Merge</span>
       </v-btn>
@@ -190,6 +190,18 @@
             ids: []
           }
         })
+      },
+      onClickMerge () {
+        const base = this.bases[0]
+        const { vcType, ids } = this.selectedAssets
+        axios.put(`/private/markets/poloniex/assets/${base}/${vcType}?mode=merge`, { ids }).then(() => {
+          return this.loadAssetsByBase(this.bases[0])
+        }).then(() => {
+          this.selectedAssets = {
+            vcType: '',
+            ids: []
+          }
+        }).catch(() => {})
       }
     }
   }
