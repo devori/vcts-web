@@ -6,7 +6,7 @@
         :pagination.sync="pagination"
         class="elevation-1 text-xs-center"
       >
-      <template slot="items" scope="props">
+      <template slot="items" slot-scope="props">
         <td class="text-xs-center">{{ props.item.vcType }}</td>
         <td class="text-xs-center">{{ props.item.type }}</td>
         <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>

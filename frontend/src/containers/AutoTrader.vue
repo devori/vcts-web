@@ -1,6 +1,6 @@
 <template>
   <v-layout>
-    <v-flex xs12 v-for="(info, key) in traders">
+    <v-flex xs12 v-for="(info, key) in traders" :key="key">
       <v-card class="blue white--text">
         <v-card-title primary-title>
           <div class="headline">{{ key }}</div>
