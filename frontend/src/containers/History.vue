@@ -1,18 +1,9 @@
 <template>
   <v-layout>
     <v-flex xs12>
-      <v-alert :color="summary.profit >= 0 ? 'info': 'error'" :value="true" class="subheading elevation-1">
+      <v-alert color='info' :value="true" class="subheading elevation-1">
         <div>
-          Profit/Loss: 0.10
-        </div>
-        <div>
-          Total Buys: 1.00
-        </div>
-        <div>
-          Total Sells: 1.07
-        </div>
-        <div>
-          Balances: 0.3
+          Total Profit: {{ totalProfit.toFixed(8) }}
         </div>
       </v-alert>
       <v-expansion-panel class="elevation-2">
@@ -95,9 +86,6 @@
           startDate: moment().date(1).format('YYYY-MM-DD'),
           endDate: moment().format('YYYY-MM-DD'),
           coins: ''
-        },
-        summary: {
-          profit: 0.1
         }
       }
     },
@@ -150,6 +138,11 @@
         return result.filter(h => {
           return moment(h.timestamp).isBetween(this.conditions.startDate, this.conditions.endDate, 'day', '[]')
         })
+      },
+      totalProfit () {
+        return this.listHistories.filter(({type}) => type === 'sell').reduce((sum, h) => {
+          return sum + (h.rate - h.buy) * h.units
+        }, 0)
       }
     },
     methods: {
