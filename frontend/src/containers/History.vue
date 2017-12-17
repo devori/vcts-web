@@ -59,7 +59,7 @@
       <br />
       <v-data-table
           :headers="headers"
-          :items="listHistories | filterByCoins(conditions.coins) | filterByDate(conditions.startDate, conditions.endDate)"
+          :items="listHistories"
           :pagination.sync="pagination"
           class="elevation-1 text-xs-center"
         >
@@ -111,21 +111,6 @@
         return list.filter(r => {
           return r.timestamp >= startTimestamp && r.timestamp < endTimestamp
         })
-      },
-      filterByCoins (list, coins) {
-        if (!coins) {
-          return list
-        }
-        coins = coins.split(' ')
-                  .map(c => c.trim().toUpperCase())
-                  .filter(c => c)
-                  .reduce((map, c) => {
-                    map[c] = true
-                    return map
-                  }, {})
-        return list.filter(h => {
-          return coins[h.vcType]
-        })
       }
     },
     computed: {
@@ -142,15 +127,29 @@
           { text: 'Datetime', value: 'timestamp' }
         ]
       },
+      coinsForFilter () {
+        return this.conditions.coins.split(' ')
+          .map(c => c.trim().toUpperCase())
+          .filter(c => c)
+          .reduce((map, c) => {
+            map[c] = true
+            return map
+          }, {})
+      },
       listHistories () {
         let result = []
         for (let vcType in this.histories) {
           if (vcType === 'BTC') {
             continue
           }
-          this.histories[vcType].forEach(h => result.push(h))
+          if (Object.keys(this.coinsForFilter).length > 0 && !this.coinsForFilter[vcType]) {
+            continue
+          }
+          result.push(...this.histories[vcType])
         }
-        return result
+        return result.filter(h => {
+          return moment(h.timestamp).isBetween(this.conditions.startDate, this.conditions.endDate, 'day', '[]')
+        })
       }
     },
     methods: {
