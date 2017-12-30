@@ -10,17 +10,14 @@
         <v-expansion-panel-content>
           <div slot="header" >
             <div>
-              <span>Coins: {{ conditions.coins ? conditions.coins : 'ALL' }}, </span>
+              <span>{{ conditions.startDate }} ~ {{ conditions.endDate }}</span>
             </div>
             <div>
-              <span>{{ conditions.startDate }} ~ {{ conditions.endDate }}</span>
+              <span>Coin: {{ conditions.coin ? conditions.coin : 'ALL' }}</span>
             </div>
           </div>
           <v-card>
             <v-card-text class="grey lighten-4">
-              <v-flex xs10>
-                <v-text-field v-model="conditions.coins" placeholder="Coins"></v-text-field>
-              </v-flex>
               <v-menu transition="slide-y-transition">
                 <v-text-field
                   slot="activator"
@@ -43,6 +40,9 @@
                 <v-date-picker v-model="conditions.endDate" no-title scrollable actions>
                 </v-date-picker>
               </v-menu>
+              <v-flex xs10>
+                <v-text-field v-model="conditions.coin" placeholder="Coin"></v-text-field>
+              </v-flex>
             </v-card-text>
           </v-card>
         </v-expansion-panel-content>
@@ -75,6 +75,7 @@
       this.loadHistoriesByBase(this.bases[0])
     },
     data () {
+      const today = moment('2017-10-08').format('YYYY-MM-DD')
       return {
         histories: {},
         active: '',
@@ -83,9 +84,9 @@
           descending: true
         },
         conditions: {
-          startDate: moment().date(1).format('YYYY-MM-DD'),
-          endDate: moment().format('YYYY-MM-DD'),
-          coins: ''
+          startDate: today,
+          endDate: today,
+          coin: ''
         }
       }
     },
@@ -115,22 +116,13 @@
           { text: 'Datetime', value: 'timestamp' }
         ]
       },
-      coinsForFilter () {
-        return this.conditions.coins.split(' ')
-          .map(c => c.trim().toUpperCase())
-          .filter(c => c)
-          .reduce((map, c) => {
-            map[c] = true
-            return map
-          }, {})
-      },
       listHistories () {
         let result = []
         for (let vcType in this.histories) {
           if (vcType === 'BTC') {
             continue
           }
-          if (Object.keys(this.coinsForFilter).length > 0 && !this.coinsForFilter[vcType]) {
+          if (!vcType.startsWith(this.conditions.coin.toUpperCase())) {
             continue
           }
           result.push(...this.histories[vcType])
