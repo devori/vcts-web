@@ -74,7 +74,7 @@
       this.loadHistoriesByBase(this.bases[0])
     },
     data () {
-      const today = moment('2017-12-31').format('YYYY-MM-DD')
+      const today = moment().format('YYYY-MM-DD')
       return {
         histories: {},
         active: '',
