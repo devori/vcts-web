@@ -55,13 +55,12 @@
           class="elevation-1 text-xs-center"
         >
         <template slot="items" slot-scope="props">
-          <td class="text-xs-center">{{ props.item.vcType }}</td>
-          <td class="text-xs-center">{{ props.item.type }}</td>
-          <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
-          <td v-if="props.item.type !== 'sell'" class="text-xs-right">{{ props.item.rate }}</td>
-          <td v-if="props.item.type === 'sell'" class="text-xs-right">{{ props.item.rate }}({{ props.item.buy }})</td>
-          <td class="text-xs-right">{{ (props.item.units * props.item.rate) }}</td>
+          <td class="text-xs-center">{{ props.item.vcType }} ({{ props.item.type }})</td>
           <td class="text-xs-center">{{ new Date(props.item.timestamp).toLocaleString() }}</td>
+          <td class="text-xs-right">{{ (props.item.units * props.item.rate).toFixed(8) }}</td>
+          <td class="text-xs-right">{{ props.item.units.toFixed(8) }}</td>
+          <td v-if="props.item.type !== 'sell'" class="text-xs-right">{{ props.item.rate.toFixed(8) }}</td>
+          <td v-if="props.item.type === 'sell'" class="text-xs-right">{{ props.item.rate.toFixed(8) }}({{ (props.item.buy || props.item.rate).toFixed(8) }})</td>
         </template>
       </v-data-table>
     </v-flex>
@@ -75,13 +74,14 @@
       this.loadHistoriesByBase(this.bases[0])
     },
     data () {
-      const today = moment().format('YYYY-MM-DD')
+      const today = moment('2017-12-31').format('YYYY-MM-DD')
       return {
         histories: {},
         active: '',
         pagination: {
           sortBy: 'timestamp',
-          descending: true
+          descending: true,
+          rowsPerPage: 25
         },
         conditions: {
           startDate: today,
@@ -109,11 +109,10 @@
       headers () {
         return [
           { text: 'Coin', value: 'vcType' },
-          { text: 'Type', value: 'type' },
+          { text: 'Datetime', value: 'timestamp' },
+          { text: 'Estimation', value: 'total' },
           { text: 'Units', value: 'units' },
-          { text: 'Rate', value: 'rate' },
-          { text: 'Estimated Value', value: 'total' },
-          { text: 'Datetime', value: 'timestamp' }
+          { text: 'Rate', value: 'rate' }
         ]
       },
       listHistories () {
