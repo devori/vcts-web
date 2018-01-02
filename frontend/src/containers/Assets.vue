@@ -92,6 +92,9 @@
       }
     },
     computed: {
+      market () {
+        return this.$route.params.market
+      },
       bases () {
         return ['BTC']
       },
@@ -142,12 +145,12 @@
     },
     methods: {
       loadAssetsByBase (base) {
-        return axios.get(`/private/markets/poloniex/assets/${base}`).then(res => {
+        return axios.get(`/private/markets/${this.market}/assets/${base}`).then(res => {
           this.assets = res.data
         }).catch(() => {})
       },
       loadTickersByBase (base) {
-        return axios.get(`/private/markets/poloniex/tickers/${base}`).then(res => {
+        return axios.get(`/private/markets/${this.market}/tickers/${base}`).then(res => {
           this.tickers = res.data
           this.tickers['BTC'] = { bid: 1 }
         }).catch(() => {})
@@ -180,7 +183,7 @@
         const { vcType, ids } = this.selectedAssets
         ids.reduce((prom, id) => {
           return prom.then(() => {
-            return axios.delete(`/private/markets/poloniex/assets/${base}/${vcType}/${id}`)
+            return axios.delete(`/private/markets/${this.market}/assets/${base}/${vcType}/${id}`)
           })
         }, Promise.resolve()).then(() => {
           return this.loadAssetsByBase(this.bases[0])
@@ -194,7 +197,7 @@
       onClickMerge () {
         const base = this.bases[0]
         const { vcType, ids } = this.selectedAssets
-        axios.put(`/private/markets/poloniex/assets/${base}/${vcType}?mode=merge`, { ids }).then(() => {
+        axios.put(`/private/markets/${this.market}/assets/${base}/${vcType}?mode=merge`, { ids }).then(() => {
           return this.loadAssetsByBase(this.bases[0])
         }).then(() => {
           this.selectedAssets = {

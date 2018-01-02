@@ -15,7 +15,7 @@ Vue.use(Vuetify)
 
 router.beforeEach((to, from, next) => {
   if (to.path === '/login' && store.state.username) {
-    next('/main/assets')
+    next('/main/markets')
   } else if (to.path.startsWith('/main') && !store.state.username) {
     store.dispatch('updateSession').then(username => {
       if (!username) {

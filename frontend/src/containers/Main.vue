@@ -40,13 +40,8 @@
         menus: [
           {
             icon: 'list',
-            title: 'Assets',
-            path: '/main/assets'
-          },
-          {
-            icon: 'list',
-            title: 'History',
-            path: '/main/history'
+            title: 'Markets',
+            path: '/main/markets'
           },
           {
             icon: 'desktop_windows',
@@ -58,8 +53,16 @@
     },
     computed: {
       title () {
-        let title = this.$route.path.replace('/main/', '')
-        return title.substring(0, 1).toUpperCase() + title.substring(1)
+        const path = this.$route.path
+        if (path.startsWith('/main/markets')) {
+          if (path === '/main/markets') {
+            return 'Markets'
+          }
+          const title = this.$route.params.market
+          return title.substring(0, 1).toUpperCase() + title.substring(1)
+        } else if (path.startsWith('/main/auto-trader')) {
+          return 'Auto-Trader'
+        }
       }
     },
     methods: {

@@ -103,6 +103,9 @@
       }
     },
     computed: {
+      market () {
+        return this.$route.params.market
+      },
       bases () {
         return ['BTC']
       },
@@ -138,7 +141,7 @@
     },
     methods: {
       loadHistoriesByBase (base) {
-        return axios.get(`/private/markets/poloniex/histories/${base}`).then(res => {
+        return axios.get(`/private/markets/${this.market}/histories/${base}`).then(res => {
           this.histories = res.data
         }).catch(() => {})
       }

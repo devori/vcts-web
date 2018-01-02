@@ -80,7 +80,7 @@
           password
         }).then(res => {
           this.$store.dispatch('login', username)
-          this.$router.replace('/main/assets')
+          this.$router.replace('/main/markets')
         }).catch(() => {
           this.snacbar.show = true
           this.snacbar.message = 'Failure'
