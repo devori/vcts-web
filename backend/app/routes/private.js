@@ -132,10 +132,10 @@ router.get('/auto-traders', (req, res) => {
 })
 
 router.post('/auto-traders/:name', (req, res) => {
-  if (req.params.name !== 'poloniex') {
-    throw 'not supported'
-  }
-  let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/poloniex`;
+  const {name: market} = req.params;
+  const {interval} = req.query;
+  const url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}?interval=${interval}`;
+  
   request({url, method: 'POST'}, (err, vctsRes, body) => {
     if (err) {
       res.status(500).send(body);
@@ -146,10 +146,8 @@ router.post('/auto-traders/:name', (req, res) => {
 })
 
 router.delete('/auto-traders/:name', (req, res) => {
-  if (req.params.name !== 'poloniex') {
-    throw 'not supported'
-  }
-  let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/poloniex`;
+  const {name: market} = req.params;
+  let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}`;
   request({url, method: 'DELETE'}, (err, vctsRes, body) => {
     if (err) {
       res.status(500).send(body);

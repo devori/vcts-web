@@ -5,7 +5,7 @@ import Main from '@/containers/Main'
 import Markets from '@/containers/Markets'
 import History from '@/containers/History'
 import Assets from '@/containers/Assets'
-import AutoTrader from '@/containers/AutoTrader'
+import AutoTrader from '@/containers/auto-traders'
 
 Vue.use(Router)
 
