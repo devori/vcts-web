@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer light absolute v-model="showDrawer">
+    <v-navigation-drawer light temporary absolute v-model="showDrawer">
       <v-toolbar flat light>
         <v-toolbar-title>VCTS</v-toolbar-title>
       </v-toolbar>
