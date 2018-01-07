@@ -16,6 +16,16 @@
             </div>
           </v-card-title>
           <v-card-text>
+            <v-slider prepend-icon="attach_money"
+                      :disabled="info.isRunning"
+                      :hint="info.unitsPerPurchase + ' BTC'"
+                      :persistent-hint="true"
+                      :step="0.001"
+                      :min="0.001"
+                      :max="0.02"
+                      v-model="info.unitsPerPurchase"></v-slider>
+          </v-card-text>
+          <v-card-text>
             <v-slider prepend-icon="alarm"
                       :disabled="info.isRunning"
                       :hint="info.interval + ' Sec'"
@@ -43,11 +53,13 @@
         traders: {
           poloniex: {
             isRunning: false,
-            interval: 300
+            interval: 300,
+            unitsPerPurchase: 0.01
           },
           binance: {
             isRunning: false,
-            interval: 300
+            interval: 300,
+            unitsPerPurchase: 0.01
           }
         }
       }
@@ -59,6 +71,7 @@
             if (res.data[name]) {
               this.traders[name].isRunning = true
               this.traders[name].interval = res.data[name].interval
+              this.traders[name].unitsPerPurchase = res.data[name].unitsPerPurchase
             } else {
               this.traders[name].isRunning = false
             }
@@ -66,10 +79,15 @@
         }).catch(() => {})
       },
       startAutoTrader (name) {
-        const interval = this.traders[name].interval
-        axios.post(`/private/auto-traders/${name}?interval=${interval}`).then(res => {
+        const { interval, unitsPerPurchase } = this.traders[name]
+        axios.post(`/private/auto-traders/${name}`, {
+          interval,
+          unitsPerPurchase
+        }).then(res => {
           return this.loadAutoTraders()
-        }).catch(() => {})
+        }).catch(() => {
+          this.traders[name].isRunning = false
+        })
       },
       stopAutoTrader (name) {
         axios.delete(`/private/auto-traders/${name}`).then(res => {

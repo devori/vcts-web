@@ -133,11 +133,19 @@ router.get('/auto-traders', (req, res) => {
 
 router.post('/auto-traders/:name', (req, res) => {
   const {name: market} = req.params;
-  const {interval} = req.query;
-  const url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}?interval=${interval}`;
-  
-  request({url, method: 'POST'}, (err, vctsRes, body) => {
-    if (err) {
+  const {interval, unitsPerPurchase} = req.body;
+  const url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}`;
+
+  request({
+    url,
+    method: 'POST',
+    json: true,
+    body: {
+      interval,
+      unitsPerPurchase
+    }
+  }, (err, vctsRes, body) => {
+    if (err || vctsRes.statusCode >= 400) {
       res.status(500).send(body);
       return;
     }
