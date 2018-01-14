@@ -153,7 +153,7 @@
         axios.get(`/private/auto-traders`).then(res => {
           this.traders = res.data.map(t => {
             t.interval /= 1000
-            t.showDetails = true
+            t.showDetails = false
             t.coins.sort((c1, c2) => c1.name < c2.name ? -1 : 1)
             return t
           })
