@@ -54,7 +54,7 @@
           <v-slide-y-transition>
             <v-card-text v-show="info.showDetails">
               <v-layout row wrap>
-                <v-flex xs6 v-for="(coin, key) in info.coins" :key="key">
+                <v-flex xs6 sm4 md3 lg2 v-for="(coin, key) in info.coins" :key="key">
                   <v-card class="blue lighten-4">
                     <v-card-title class="justify-space-between">
                       <div class="title">{{ coin.name }}</div>
@@ -154,6 +154,7 @@
           this.traders = res.data.map(t => {
             t.interval /= 1000
             t.showDetails = true
+            t.coins.sort((c1, c2) => c1.name < c2.name ? -1 : 1)
             return t
           })
         }).catch(() => {})
