@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const request = require('request');
-const crypto = require('../util/crypto');
 const { VCTS_API_URL, VCTS_AT_API_URL } = require('../properties');
 
 router.all('*', (req, res, next) => {
@@ -19,7 +18,7 @@ router.all('*', (req, res, next) => {
 router.get('/markets/:market/assets/:base?', (req, res) => {
   let username = req.session.username;
   let market = req.params.market;
-  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets`
+  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets`;
   if (req.params.base) {
     url += `/${req.params.base}`
   }
@@ -39,7 +38,7 @@ router.get('/markets/:market/assets/:base?', (req, res) => {
 router.delete('/markets/:market/assets/:base/:vcType/:id', (req, res) => {
   let username = req.session.username;
   let { market, base, vcType, id } = req.params;
-  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets/${base}/${vcType}/${id}`
+  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/assets/${base}/${vcType}/${id}`;
 
   request({
     url,
@@ -78,9 +77,9 @@ router.put('/markets/:market/assets/:base/:vcType', (req, res) => {
 router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
   let username = req.session.username;
   let { market, base, vcType } = req.params;
-  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/histories`
+  let url = `${VCTS_API_URL}/private/users/${username}/markets/${market}/histories`;
   if (base) {
-    url += `/${base}`
+    url += `/${base}`;
     if (vcType) {
       url += `/${vcType}`
     }
@@ -100,11 +99,11 @@ router.get('/markets/:market/histories/:base?/:vcType?', (req, res) => {
 
 router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
   let { market, base, vcType } = req.params;
-  let url = `${VCTS_API_URL}/public/markets/${market}/tickers`
+  let url = `${VCTS_API_URL}/public/markets/${market}/tickers`;
   if (base) {
-    url += `/${base}`
+    url += `/${base}`;
     if (vcType) {
-      url += `/${vcType}`
+      url += `/${vcType}`;
     }
   }
 
@@ -129,21 +128,17 @@ router.get('/auto-traders', (req, res) => {
     }
     res.send(body);
   });
-})
+});
 
-router.post('/auto-traders/:name', (req, res) => {
-  const {name: market} = req.params;
-  const {interval, unitsPerPurchase} = req.body;
-  const url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}`;
+router.post('/auto-traders/:market/:base', (req, res) => {
+  const {market, base} = req.params;
+  const url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}/${base}`;
 
   request({
     url,
     method: 'POST',
     json: true,
-    body: {
-      interval,
-      unitsPerPurchase
-    }
+    body: req.body,
   }, (err, vctsRes, body) => {
     if (err || vctsRes.statusCode >= 400) {
       res.status(500).send(body);
@@ -151,11 +146,11 @@ router.post('/auto-traders/:name', (req, res) => {
     }
     res.sendStatus(201);
   });
-})
+});
 
-router.delete('/auto-traders/:name', (req, res) => {
-  const {name: market} = req.params;
-  let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}`;
+router.delete('/auto-traders/:market/:base', (req, res) => {
+  const {market, base} = req.params;
+  let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}/${base}`;
   request({url, method: 'DELETE'}, (err, vctsRes, body) => {
     if (err) {
       res.status(500).send(body);
@@ -163,7 +158,7 @@ router.delete('/auto-traders/:name', (req, res) => {
     }
     res.sendStatus(200);
   });
-})
+});
 
 router.delete('/session', (req, res) => {
   req.session.destroy(err => {

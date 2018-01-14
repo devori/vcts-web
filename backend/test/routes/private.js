@@ -1,19 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-var session = require('express-session');
+const session = require('express-session');
 const supertest = require('supertest');
-const sinon = require('sinon');
-const { expect, should } = require('chai');
-const nock = require('nock');
+const { expect } = require('chai');
 const privateRouter = require('../../app/routes/private');
-const { VCTS_API_URL } = require('../../app/properties');
 
 describe('routes/private', function () {
   const USERNAME = 'test-user';
-  const MARKET = 'poloniex';
 
   let app;
-  let mockUserDB;
 
   describe('before login', () => {
     before(() => {
@@ -32,7 +27,7 @@ describe('routes/private', function () {
       supertest(app)
         .delete(`/session`)
         .expect(401)
-        .end((err, res) => {
+        .end((err) => {
           if (err) {
             expect.fail('', '', err);
             return;
@@ -43,9 +38,6 @@ describe('routes/private', function () {
   });
 
   describe('after login', function () {
-    const API_KEY = 'test-api-key';
-    const SIGN = 'test-sign';
-
     before(() => {
       app = express();
       app.use(session({
@@ -66,7 +58,7 @@ describe('routes/private', function () {
       supertest(app)
         .delete(`/session`)
         .expect(200)
-        .end((err, res) => {
+        .end((err) => {
           if (err) {
             expect.fail('', '', err);
             return;
