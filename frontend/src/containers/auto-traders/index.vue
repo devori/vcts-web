@@ -58,7 +58,10 @@
                   <v-card class="blue lighten-4">
                     <v-card-title class="justify-space-between">
                       <div class="title">{{ coin.name }}</div>
-                      <v-btn icon flat @click="removeCoin(info.market, info.base, coin.name)">
+                      <v-btn icon
+                             flat
+                             :disabled="info.isRunning"
+                             @click="removeCoin(info.market, info.base, coin.name)">
                         <v-icon blue>close</v-icon>
                       </v-btn>
                     </v-card-title>
