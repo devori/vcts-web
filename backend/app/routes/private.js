@@ -148,6 +148,24 @@ router.post('/auto-traders/:market/:base', (req, res) => {
   });
 });
 
+router.post('/markets/:market/order', (req, res) => {
+  const {market} = req.params;
+  const url = `${VCTS_API_URL}/private/users/${req.session.username}/markets/${market}/order`;
+
+    request({
+        url,
+        method: 'POST',
+        json: true,
+        body: req.body,
+    }, (err, vctsRes, body) => {
+        if (err || vctsRes.statusCode >= 400) {
+            res.status(500).send(body);
+            return;
+        }
+        res.sendStatus(201);
+    });
+});
+
 router.delete('/auto-traders/:market/:base', (req, res) => {
   const {market, base} = req.params;
   let url = `${VCTS_AT_API_URL}/private/users/${req.session.username}/auto-traders/${market}/${base}`;

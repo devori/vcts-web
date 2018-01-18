@@ -66,6 +66,10 @@
         <v-icon>delete</v-icon>
         <span>Remove</span>
       </v-btn>
+      <v-btn dark flat @click="onClickSell">
+        <v-icon>wrap_text</v-icon>
+        <span>Sell</span>
+      </v-btn>
     </v-snackbar>
   </v-layout>
 </template>
@@ -198,6 +202,30 @@
         const base = this.bases[0]
         const { vcType, ids } = this.selectedAssets
         axios.put(`/private/markets/${this.market}/assets/${base}/${vcType}?mode=merge`, { ids }).then(() => {
+          return this.loadAssetsByBase(this.bases[0])
+        }).then(() => {
+          this.selectedAssets = {
+            vcType: '',
+            ids: []
+          }
+        }).catch(() => {})
+      },
+      onClickSell () {
+        const base = this.bases[0]
+        const { vcType, ids } = this.selectedAssets
+        const rate = this.tickers[vcType].bid
+        const units = this.assets[vcType].filter(a => {
+          return ids.some(id => id === a.uuid)
+        }).reduce((sum, a) => sum + a.units, 0)
+
+        axios.post(`/private/markets/${this.market}/order`, {
+          side: 'sell',
+          base,
+          vcType,
+          ids,
+          units,
+          rate
+        }).then(() => {
           return this.loadAssetsByBase(this.bases[0])
         }).then(() => {
           this.selectedAssets = {
