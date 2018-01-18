@@ -213,7 +213,7 @@
       onClickSell () {
         const base = this.bases[0]
         const { vcType, ids } = this.selectedAssets
-        const rate = this.tickers[vcType].bid
+        const rate = this.tickers[vcType].bid * 1.01
         const units = this.assets[vcType].filter(a => {
           return ids.some(id => id === a.uuid)
         }).reduce((sum, a) => sum + a.units, 0)
