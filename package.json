@@ -5,6 +5,9 @@
   "scripts": {
     "test": "npm help"
   },
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-airbnb-base": "^10.0.0"
   }
 }
