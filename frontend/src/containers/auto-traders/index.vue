@@ -18,6 +18,24 @@
                         </div>
                     </v-card-title>
                     <v-card-text>
+                        <v-slider prepend-icon="exposure_plus_1"
+                                  :disabled="info.isRunning"
+                                  :hint="`Buy : -${Math.trunc(info.rule.options.rateForPurchase * 100)} %`"
+                                  :persistent-hint="true"
+                                  :step="0.01"
+                                  :min="0.01"
+                                  :max="0.20"
+                                  @input="(rate) => onChangeRate(info.market, info.base, rate, info.rule.options.rateForSale)"
+                                  v-model="info.rule.options.rateForPurchase"/>
+                        <v-slider prepend-icon="exposure_neg_1"
+                                  :disabled="info.isRunning"
+                                  :hint="`Sell : ${Math.trunc(info.rule.options.rateForSale * 100)} %`"
+                                  :persistent-hint="true"
+                                  :step="0.01"
+                                  :min="0.01"
+                                  :max="0.20"
+                                  @input="(rate) => onChangeRate(info.market, info.base, info.rule.options.rateForPurchase, rate)"
+                                  v-model="info.rule.options.rateForSale"/>
                         <v-slider prepend-icon="attach_money"
                                   :disabled="info.isRunning"
                                   :hint="`Min - ${info.minUnits} BTC`"
@@ -148,6 +166,13 @@
                         t.interval /= 1000;
                         t.showDetails = false;
                         t.coins.sort((c1, c2) => c1.name < c2.name ? -1 : 1);
+                        t.rule = t.rule || {
+                            name: 'default',
+                            options: {
+                                rateForPurchase: 0.07,
+                                rateForSale: 0.07,
+                            },
+                        };
                         return t;
                     });
                 }).catch(() => {});
@@ -156,12 +181,13 @@
                 return this.traders.find(t => t.market === market && t.base === base);
             },
             startAutoTrader (market, base) {
-                const {interval, minUnits, maxUnits, coins} = this.getTrader(market, base);
+                const {interval, minUnits, maxUnits, coins, rule} = this.getTrader(market, base);
                 axios.post(`/private/auto-traders/${market}/${base}`, {
                     interval: interval * 1000,
                     minUnits,
                     maxUnits,
                     coins,
+                    rule,
                 }).finally(() => {
                     return this.loadAutoTraders();
                 }).catch(() => {});
@@ -195,6 +221,13 @@
                 }
                 trader.minUnits = minUnits;
                 trader.maxUnits = maxUnits;
+            },
+            onChangeRate (market, base, rateForPurchase, rateForSale) {
+                const trader = this.getTrader(market, base);
+                trader.rule.options = {
+                    rateForPurchase,
+                    rateForSale,
+                };
             },
             addCoin (market, base) {
                 const name = this.coinName.toUpperCase();
