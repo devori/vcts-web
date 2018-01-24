@@ -2,7 +2,7 @@
     <v-layout>
         <v-flex xs12>
             <v-alert color="info" :value="true" class="headline">
-                Total - {{ totalEstimation.toFixed(8) }}
+                Total - {{ totalSummary.estimation.toFixed(8) }} ({{ (totalSummary.estimation / totalSummary.principal).toFixed(2) }})
             </v-alert>
             <v-toolbar light>
                 <v-btn-toggle mandatory v-model="sort.target">
@@ -108,8 +108,15 @@
             bases () {
                 return ['BTC'];
             },
-            totalEstimation () {
-                return this.listSummaries.reduce((acc, s) => acc + s.estimation, 0);
+            totalSummary () {
+                const estimation = this.listSummaries.reduce((acc, s) => acc + s.estimation, 0);
+                const principal = this.listSummaries
+                    .filter(s => !isNaN(s.units) && !isNaN(s.rate))
+                    .reduce((acc, s) => acc + s.units * s.rate, 0);
+                return {
+                    estimation,
+                    principal,
+                };
             },
             listSortedSummaries () {
                 let result = this.listSummaries.slice(0);
