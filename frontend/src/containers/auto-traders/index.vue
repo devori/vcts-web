@@ -91,47 +91,18 @@
                     </v-slide-y-transition>
                 </v-card>
             </v-flex>
-            <v-flex>
-                <v-btn block class="blue lighten-2"
-                       @click="showAddDialog = true"
-                >
-                    Add Trader
-                </v-btn>
-            </v-flex>
-            <v-dialog v-model="showAddDialog" max-width="300px">
-                <v-card>
-                    <v-card-title>
-                        Add Trader
-                    </v-card-title>
-                    <v-card-text>
-                        <v-text-field label="Market Name"
-                                      v-model="marketName"
-                                      clearable
-                                      required/>
-                        <v-text-field label="Base Name"
-                                      v-model="baseName"
-                                      clearable
-                                      required/>
-                    </v-card-text>
-                    <v-card-actions>
-                        <v-btn color="primary"
-                               :disabled="isDialogOkDisabled"
-                               block
-                               flat
-                               @click.stop="onClickAddDialogOk">OK
-                        </v-btn>
-                    </v-card-actions>
-                </v-card>
-            </v-dialog>
+            <trader-creation :traders="traders" @create="onCreateTrader"/>
         </v-layout>
     </v-container>
 </template>
 <script>
     import axios from 'axios';
     import TradeItem from './trade-item';
+    import TraderCreation from './trader-creation';
 
     export default {
         components: {
+            TraderCreation,
             TradeItem,
         },
         mounted () {
@@ -145,19 +116,6 @@
                 marketName: '',
                 baseName: '',
             };
-        },
-        computed: {
-            isDialogOkDisabled () {
-                const market = this.marketName.toLowerCase();
-                const base = this.baseName.toUpperCase();
-                if (!market || !base) {
-                    return true;
-                }
-                if (this.traders.find(t => t.market === market && t.base === base)) {
-                    return true;
-                }
-                return false;
-            },
         },
         methods: {
             loadAutoTraders () {
@@ -254,10 +212,9 @@
                 const coin = trader.coins.find(coin => coin.name === changedItem.name);
                 Object.assign(coin, changedItem);
             },
-            onClickAddDialogOk () {
-                this.showAddDialog = false;
-                const market = this.marketName.toLowerCase();
-                const base = this.baseName.toUpperCase();
+            onCreateTrader (newTrader) {
+                const market = newTrader.market.toLowerCase();
+                const base = newTrader.base.toUpperCase();
                 this.traders.push({
                     market,
                     base,
@@ -266,6 +223,13 @@
                     maxUnits: 0.01,
                     coins: [],
                     showDetails: false,
+                    rule: {
+                        name: 'default',
+                        options: {
+                            rateForPurchase: 0.07,
+                            rateForSale: 0.07,
+                        },
+                    },
                 });
             },
         },
