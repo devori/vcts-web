@@ -14,8 +14,18 @@ Vue.prototype.$http = axios;
 Vue.use(Vuetify);
 
 router.beforeEach((to, from, next) => {
-    if (to.path === '/login' && store.state.username) {
-        next('/main/markets');
+    if (to.path === '/login') {
+        if (!store.state.username) {
+            store.dispatch('updateSession').then(username => {
+                if (!username) {
+                    next();
+                } else {
+                    next('/main/markets');
+                }
+            });
+        } else {
+            next('/main/markets');
+        }
     } else if (to.path.startsWith('/main') && !store.state.username) {
         store.dispatch('updateSession').then(username => {
             if (!username) {
