@@ -25,7 +25,7 @@
                                     v-model="conditions.startDate"
                                     prepend-icon="event"
                                     readonly
-                                ></v-text-field>
+                                />
                                 <v-date-picker v-model="conditions.startDate" no-title scrollable actions>
                                 </v-date-picker>
                             </v-menu>
@@ -36,12 +36,12 @@
                                     v-model="conditions.endDate"
                                     prepend-icon="event"
                                     readonly
-                                ></v-text-field>
+                                />
                                 <v-date-picker v-model="conditions.endDate" no-title scrollable actions>
                                 </v-date-picker>
                             </v-menu>
                             <v-flex xs10>
-                                <v-text-field v-model="conditions.coin" placeholder="Coin"></v-text-field>
+                                <v-text-field v-model="conditions.coin" placeholder="Coin"/>
                             </v-flex>
                         </v-card-text>
                     </v-card>

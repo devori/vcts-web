@@ -4,7 +4,7 @@
             <v-toolbar flat light>
                 <v-toolbar-title>VCTS</v-toolbar-title>
             </v-toolbar>
-            <v-divider></v-divider>
+            <v-divider/>
             <v-list dense class="pt-0">
                 <v-list-tile v-for="m in menus" :key="m.title" @click="movePage(m.path)">
                     <v-list-tile-action>
@@ -17,16 +17,16 @@
             </v-list>
         </v-navigation-drawer>
         <v-toolbar dark color="primary">
-            <v-toolbar-side-icon @click="showDrawer = !showDrawer"></v-toolbar-side-icon>
+            <v-toolbar-side-icon @click="showDrawer = !showDrawer"/>
             <v-toolbar-title>{{ title }}</v-toolbar-title>
-            <v-spacer></v-spacer>
+            <v-spacer/>
             <v-btn flat @click.native="onClickLogout">
                 Logout
             </v-btn>
         </v-toolbar>
         <main>
             <v-container fluid>
-                <router-view></router-view>
+                <router-view/>
             </v-container>
         </main>
     </div>
@@ -47,7 +47,7 @@
                     {
                         icon: 'desktop_windows',
                         title: 'Auto Trader',
-                        path: '/main/auto-trader',
+                        path: '/main/auto-traders',
                     },
                 ],
             };
