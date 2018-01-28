@@ -15,9 +15,8 @@ describe('routes/private/history', function () {
     beforeEach(() => {
         nock(VCTS_API_URL)
             .get(`/private/users/${USERNAME}/markets/${MARKET}/histories/${BASE}`)
-            .reply(200, {
-                'ETH': [1, 2, 3]
-            });
+            .query({start: 1, end: 2})
+            .reply(200, [1, 2, 3]);
 
         app = express();
         app.use(bodyParser.json());
@@ -33,11 +32,12 @@ describe('routes/private/history', function () {
         nock.cleanAll();
     });
 
-    describe('GET /:base?/:vcType?', () => {
+    describe('GET /:base?', () => {
         it('return histories', done => {
             supertest(app)
                 .get(`/BTC`)
-                .expect(200, {ETH: [1,2,3]})
+                .query({start: 1, end: 2})
+                .expect(200, [1,2,3])
                 .end(done);
         });
     });

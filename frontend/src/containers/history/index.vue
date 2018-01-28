@@ -26,7 +26,11 @@
                                     prepend-icon="event"
                                     readonly
                                 />
-                                <v-date-picker v-model="conditions.startDate" no-title scrollable actions>
+                                <v-date-picker v-model="conditions.startDate"
+                                               no-title scrollable
+                                               actions
+                                               @input="onChangeDate"
+                                >
                                 </v-date-picker>
                             </v-menu>
                             <v-menu transition="slide-y-transition">
@@ -37,7 +41,12 @@
                                     prepend-icon="event"
                                     readonly
                                 />
-                                <v-date-picker v-model="conditions.endDate" no-title scrollable actions>
+                                <v-date-picker v-model="conditions.endDate"
+                                               no-title
+                                               scrollable
+                                               actions
+                                               @input="onChangeDate"
+                                >
                                 </v-date-picker>
                             </v-menu>
                             <v-flex xs10>
@@ -74,12 +83,12 @@
 
     export default {
         mounted () {
-            this.loadHistoriesByBase(this.bases[0]);
+            this.loadHistories(this.bases[0]);
         },
         data () {
             const today = moment().format('YYYY-MM-DD');
             return {
-                histories: {},
+                histories: [],
                 active: '',
                 pagination: {
                     sortBy: 'timestamp',
@@ -94,16 +103,6 @@
             };
         },
         filters: {
-            filterByDate (list, startDate, endDate) {
-                let startTimestamp = new Date(startDate);
-                startTimestamp = startTimestamp.getTime() + startTimestamp.getTimezoneOffset() * 60000;
-                let endTimestamp = new Date(endDate);
-                endTimestamp.setDate(endTimestamp.getDate() + 1);
-                endTimestamp = endTimestamp.getTime() + endTimestamp.getTimezoneOffset() * 60000;
-                return list.filter(r => {
-                    return r.timestamp >= startTimestamp && r.timestamp < endTimestamp;
-                });
-            },
         },
         computed: {
             market () {
@@ -122,19 +121,9 @@
                 ];
             },
             listHistories () {
-                let result = [];
-                for (let vcType in this.histories) {
-                    if (vcType === 'BTC') {
-                        continue;
-                    }
-                    if (!vcType.startsWith(this.conditions.coin.toUpperCase())) {
-                        continue;
-                    }
-                    result.push(...this.histories[vcType]);
-                }
-                return result.filter(h => {
-                    return moment(h.timestamp).isBetween(this.conditions.startDate, this.conditions.endDate, 'day', '[]');
-                });
+                return this.histories
+                    .filter(({vcType}) => vcType !== this.bases[0])
+                    .filter(({vcType}) => vcType.toUpperCase().indexOf(this.conditions.coin.toUpperCase()) >= 0);
             },
             totalProfit () {
                 return this.listHistories.filter(({type}) => type === 'sell').reduce((sum, h) => {
@@ -143,11 +132,18 @@
             },
         },
         methods: {
-            loadHistoriesByBase (base) {
-                return axios.get(`/private/markets/${this.market}/histories/${base}`).then(res => {
+            loadHistories () {
+                return axios.get(`/private/markets/${this.market}/histories/${this.bases[0]}`, {
+                    params: {
+                        start: moment(this.conditions.startDate).valueOf(),
+                        end: moment(this.conditions.endDate).add(1, 'days').valueOf() - 1,
+                    },
+                }).then(res => {
                     this.histories = res.data;
-                }).catch(() => {
-                });
+                }).catch(() => {});
+            },
+            onChangeDate () {
+                this.loadHistories();
             },
         },
     };
