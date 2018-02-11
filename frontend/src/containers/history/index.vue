@@ -51,7 +51,7 @@
                     rowsPerPage: 25,
                 },
                 conditions: {
-                    startDate: 0,
+                    startDate: today,
                     endDate: today,
                     coins: [],
                 },

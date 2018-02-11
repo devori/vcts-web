@@ -82,7 +82,7 @@
         data () {
             const today = moment().format('YYYY-MM-DD');
             return {
-                startDate: '2018-01-01',
+                startDate: today,
                 endDate: today,
                 selectedCoins: [],
             };
