@@ -6,56 +6,7 @@
                     Total Profit: {{ totalProfit.toFixed(8) }}
                 </div>
             </v-alert>
-            <v-expansion-panel class="elevation-2">
-                <v-expansion-panel-content>
-                    <div slot="header">
-                        <div>
-                            <span>{{ conditions.startDate }} ~ {{ conditions.endDate }}</span>
-                        </div>
-                        <div>
-                            <span>Coin: {{ conditions.coin ? conditions.coin : 'ALL' }}</span>
-                        </div>
-                    </div>
-                    <v-card>
-                        <v-card-text class="grey lighten-4">
-                            <v-menu transition="slide-y-transition">
-                                <v-text-field
-                                    slot="activator"
-                                    label="Start Date"
-                                    v-model="conditions.startDate"
-                                    prepend-icon="event"
-                                    readonly
-                                />
-                                <v-date-picker v-model="conditions.startDate"
-                                               no-title scrollable
-                                               actions
-                                               @input="onChangeDate"
-                                >
-                                </v-date-picker>
-                            </v-menu>
-                            <v-menu transition="slide-y-transition">
-                                <v-text-field
-                                    slot="activator"
-                                    label="End Date"
-                                    v-model="conditions.endDate"
-                                    prepend-icon="event"
-                                    readonly
-                                />
-                                <v-date-picker v-model="conditions.endDate"
-                                               no-title
-                                               scrollable
-                                               actions
-                                               @input="onChangeDate"
-                                >
-                                </v-date-picker>
-                            </v-menu>
-                            <v-flex xs10>
-                                <v-text-field v-model="conditions.coin" placeholder="Coin"/>
-                            </v-flex>
-                        </v-card-text>
-                    </v-card>
-                </v-expansion-panel-content>
-            </v-expansion-panel>
+            <Conditions :coins="listCoins" @change="onChangeCondition"/>
             <br/>
             <v-data-table
                 :headers="headers"
@@ -80,8 +31,12 @@
 <script>
     import axios from 'axios';
     import moment from 'moment';
+    import Conditions from './Conditions';
 
     export default {
+        components: {
+            Conditions,
+        },
         mounted () {
             this.loadHistories(this.bases[0]);
         },
@@ -96,9 +51,9 @@
                     rowsPerPage: 25,
                 },
                 conditions: {
-                    startDate: today,
+                    startDate: 0,
                     endDate: today,
-                    coin: '',
+                    coins: [],
                 },
             };
         },
@@ -121,14 +76,36 @@
                 ];
             },
             listHistories () {
+                const coins = this.conditions.coins.map(c => c.toUpperCase());
+
                 return this.histories
-                    .filter(({vcType}) => vcType !== this.bases[0])
-                    .filter(({vcType}) => vcType.toUpperCase().indexOf(this.conditions.coin.toUpperCase()) >= 0);
+                    .filter(({vcType}) => vcType.toUpperCase() !== this.bases[0])
+                    .filter(({vcType}) => coins.length === 0 || coins.indexOf(vcType.toUpperCase()) >= 0);
             },
             totalProfit () {
-                return this.listHistories.filter(({type}) => type === 'sell').reduce((sum, h) => {
+                return this.listHistories.filter(({type, buy}) => type === 'sell' && buy !== undefined).reduce((sum, h) => {
                     return sum + (h.rate - h.buy) * h.units;
                 }, 0);
+            },
+            listCoins () {
+                const namesMap = this.histories.filter(({vcType}) => vcType.toUpperCase() !== this.bases[0])
+                    .reduce((accum, {vcType}) => {
+                        accum[vcType] = true;
+                        return accum;
+                    }, {});
+
+                const names = Object.keys(namesMap);
+
+                names.sort((n1, n2) => {
+                    if (n1 < n2) {
+                        return -1;
+                    } else if (n1 > n2) {
+                        return 1;
+                    }
+                    return 0;
+                });
+
+                return names;
             },
         },
         methods: {
@@ -142,8 +119,14 @@
                     this.histories = res.data;
                 }).catch(() => {});
             },
-            onChangeDate () {
-                this.loadHistories();
+            onChangeCondition (type, ...values) {
+                if (type === 'date') {
+                    this.conditions.startDate = values[0];
+                    this.conditions.endDate = values[1];
+                    this.loadHistories();
+                } else if (type === 'coins') {
+                    this.conditions.coins = values[0];
+                }
             },
         },
     };
