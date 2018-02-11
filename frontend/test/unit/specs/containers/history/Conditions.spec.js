@@ -43,14 +43,14 @@ describe('containers/history/Conditions', function () {
             it('remove coin at coins', () => {
                 vm.onRemoveCoin('B');
 
-                expect(vm.selectedCoins).to.deep.equal(['A', 'C'])
+                expect(vm.selectedCoins).to.deep.equal(['A', 'C']);
             });
 
             it('emit changeCoins with coins', () => {
                 vm.onRemoveCoin('B');
 
                 expect(vm.$emit.calledWith('change', 'coins', ['A', 'C'])).to.be.true;
-            })
+            });
         });
     });
 });

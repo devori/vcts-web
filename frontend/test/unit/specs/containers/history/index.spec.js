@@ -16,7 +16,7 @@ describe('containers/history', function () {
             data: [
                 {vcType: 'a', units: 0, rate: 1},
                 {vcType: 'b', units: 0, rate: 1},
-                {vcType: 'c', units: 0, rate: 1}
+                {vcType: 'c', units: 0, rate: 1},
             ],
         });
 
@@ -96,7 +96,7 @@ describe('containers/history', function () {
                     params: {
                         start: moment('2018-01-01').valueOf(),
                         end: moment('2018-02-02').valueOf() - 1,
-                    }
+                    },
                 }))).to.be.true;
             });
 
