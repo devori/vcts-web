@@ -50,6 +50,7 @@
                             multiple
                             chips
                             solo
+                            append-icon=""
                             @input="onChangeCoins"
                         >
                             <template slot="selection" slot-scope="data">
