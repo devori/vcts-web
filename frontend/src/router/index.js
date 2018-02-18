@@ -6,6 +6,7 @@ import Markets from '@/containers/Markets';
 import History from '@/containers/history';
 import Assets from '@/containers/Assets';
 import AutoTraders from '@/containers/auto-traders';
+import Analysis from '@/containers/analysis';
 
 Vue.use(Router);
 
@@ -38,6 +39,10 @@ export default new Router({
                 {
                     path: 'auto-traders',
                     component: AutoTraders,
+                },
+                {
+                    path: 'analysis',
+                    component: Analysis,
                 },
             ],
         },

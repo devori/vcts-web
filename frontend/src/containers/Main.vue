@@ -45,6 +45,11 @@
                         path: '/main/markets',
                     },
                     {
+                        icon: 'show_chart',
+                        title: 'Analysis',
+                        path: '/main/analysis',
+                    },
+                    {
                         icon: 'desktop_windows',
                         title: 'Auto Trader',
                         path: '/main/auto-traders',

@@ -18,8 +18,6 @@ describe('containers/auto-traders', function () {
     });
 
     describe('computed', () => {
-        it('test', () => {
-        });
     });
 
     describe('methods', () => {
