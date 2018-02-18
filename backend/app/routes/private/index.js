@@ -5,6 +5,7 @@ const {VCTS_API_URL} = require('../../properties');
 const assetRotuer = require('./asset');
 const historyRotuer = require('./history');
 const autoTraderRotuer = require('./auto-trader');
+const analysisRouter = require('./analysis');
 
 router.use('*', (req, res, next) => {
     const username = req.session.username;
@@ -28,6 +29,7 @@ router.use('/markets/:market', (req, res, next) => {
 router.use('/markets/:market/assets', assetRotuer);
 router.use('/markets/:market/histories', historyRotuer);
 router.use('/auto-traders', autoTraderRotuer);
+router.use('/analysis', analysisRouter);
 
 router.get('/markets/:market/tickers/:base?/:vcType?', (req, res) => {
     let {market, base, vcType} = req.params;
