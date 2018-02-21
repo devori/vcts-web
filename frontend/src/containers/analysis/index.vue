@@ -48,15 +48,22 @@
                             label: 'Base Balance',
                             data: data.map(({units}) => units),
                             fill: false,
-                            borderColor: '#bce7d6',
-                            backgroundColor: '#bce7d6',
+                            borderColor: '#14A9C5',
+                            backgroundColor: '#14A9C5',
+                        },
+                        {
+                            label: 'Base Rate(10,000$)',
+                            data: data.map(({rate}) => rate.usdt / 10000),
+                            fill: false,
+                            borderColor: '#FBAD40',
+                            backgroundColor: '#FBAD40',
                         },
                         {
                             label: 'USDT Balance(10,000$)',
                             data: data.map(({units, rate}) => units * rate.usdt / 10000),
                             fill: false,
-                            borderColor: '#d66ff1',
-                            backgroundColor: '#d66ff1',
+                            borderColor: '#72CD22',
+                            backgroundColor: '#72CD22',
                         },
                     ];
                 }).catch(() => {});
