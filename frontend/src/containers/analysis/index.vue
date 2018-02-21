@@ -46,10 +46,17 @@
                     this.chartData.datasets = [
                         {
                             label: 'Base Balance',
-                            data: data.map(({total}) => total),
+                            data: data.map(({units}) => units),
                             fill: false,
                             borderColor: '#bce7d6',
                             backgroundColor: '#bce7d6',
+                        },
+                        {
+                            label: 'USDT Balance(10,000$)',
+                            data: data.map(({units, rate}) => units * rate.usdt / 10000),
+                            fill: false,
+                            borderColor: '#d66ff1',
+                            backgroundColor: '#d66ff1',
                         },
                     ];
                 }).catch(() => {});
