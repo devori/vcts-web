@@ -36,7 +36,7 @@ describe('containers/analysis', function () {
                     expect(vm.chartData.datasets[0].data.length).to.equal(1);
                     expect(vm.chartData.datasets[0].data[0]).to.equal(1);
                     done();
-                }, 100)
+                }, 100);
             });
         });
     });

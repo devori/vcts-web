@@ -1,6 +1,5 @@
 {
   "VCTS_AT_API_URL": "http://localhost:7000/api/v1",
   "VCTS_API_URL": "http://localhost:8000/api/v1",
-  "VCTS_ANALYSIS_API_URL": "http://localhost:9000/api/v1",
-  "HASH_KEY": "f49be88f-b607-458b-b5ba-714dd1abffek1"
+  "VCTS_ANALYSIS_API_URL": "http://localhost:9000/api/v1"
 }

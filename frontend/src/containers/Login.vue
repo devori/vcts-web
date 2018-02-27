@@ -57,6 +57,7 @@
 </template>
 <script>
     import axios from 'axios';
+    import sha256 from 'sha256';
 
     export default {
         data () {
@@ -71,14 +72,16 @@
         },
         methods: {
             onClickLogin () {
-                let username = this.username;
-                let password = this.password;
+                const username = this.username;
+                const password = this.password;
                 if (!username || !password) {
                     return;
                 }
+                const timestamp = new Date().getTime();
                 axios.post('/public/session', {
                     username,
-                    password,
+                    password: sha256(sha256(password) + timestamp),
+                    timestamp,
                 }).then(res => {
                     this.$store.dispatch('login', username);
                     this.$router.replace('/main/markets');

@@ -3,13 +3,22 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const supertest = require('supertest');
 const sinon = require('sinon');
+const crypto = require('crypto');
 const publicRouter = require('../../app/routes/public');
 const account = require('../../app/account');
 
+function hash(str) {
+    const hash = crypto.createHash('sha256');
+    hash.update(str);
+    return hash.digest('hex');
+}
+
 describe('routes/public', function () {
+    const TIMESTAMP = 123;
     const USERNAME = 'test-user';
     const CORRECT_PASSWORD = 'correct-password';
     const INCORRECT_PASSWORD = 'incorrect-password';
+    const HASHED_PASSWORD_WITH_TIMESTAMP = hash(hash(CORRECT_PASSWORD) + TIMESTAMP)
 
     let app;
     before(() => {
@@ -19,7 +28,7 @@ describe('routes/public', function () {
         }).returns(Promise.resolve({username: USERNAME}));
 
         sinon.stub(account, 'findByUsername').withArgs(USERNAME).returns({
-            password: '4e7cb3587212f15ff21005981af212b33fcbfa51469c807d226efece0c4f5708cd9c83cf20bac3a5124abec10fe53a22ab1db8530d1cf05121d4bfd059fb0ae4'
+            password: '9246aa9be8de7b40d64eb664986430793b6cc13a19d2a456981e44f28303f9cf'
         });
 
         app = express();
@@ -49,8 +58,9 @@ describe('routes/public', function () {
         supertest(app)
             .post('/session')
             .send({
+                timestamp: TIMESTAMP,
                 username: USERNAME,
-                password: CORRECT_PASSWORD
+                password: HASHED_PASSWORD_WITH_TIMESTAMP
             })
             .expect('Content-Type', 'application/json; charset=utf-8')
             .expect(200, {status: 'success', result: 'Success'})
@@ -61,6 +71,7 @@ describe('routes/public', function () {
         supertest(app)
             .post(`/session`)
             .send({
+                timestamp: TIMESTAMP,
                 username: USERNAME,
                 password: INCORRECT_PASSWORD
             })
