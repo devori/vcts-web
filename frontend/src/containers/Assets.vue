@@ -34,7 +34,7 @@
                         </v-list-tile-content>
                         <v-list-tile-action v-if="summary.assets.length > 0">
                             <div class="badge">
-                                <v-badge color="red" left>
+                                <v-badge v-show="countMoreThan1(summary.assets) > 0" color="red" left>
                                     <span slot="badge">{{ countMoreThan1(summary.assets) }}</span>
                                 </v-badge>
                                 <v-badge>
