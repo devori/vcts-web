@@ -33,12 +33,17 @@
                             </v-list-tile-sub-title>
                         </v-list-tile-content>
                         <v-list-tile-action v-if="summary.assets.length > 0">
-                            <v-badge left>
-                                <span slot="badge">{{ summary.assets.length }}</span>
-                            </v-badge>
+                            <div class="badge">
+                                <v-badge color="red" left>
+                                    <span slot="badge">{{ countMoreThan1(summary.assets) }}</span>
+                                </v-badge>
+                                <v-badge>
+                                    <span slot="badge">{{ countLessThan1(summary.assets) }}</span>
+                                </v-badge>
+                            </div>
                         </v-list-tile-action>
                     </v-list-tile>
-                    <v-list-tile v-for="asset in summary.assets" :key="asset.uuid"
+                    <v-list-tile v-if="selectedAssets.vcType === summary.vcType" v-for="asset in summary.assets" :key="asset.uuid"
                                  @click="onClickAsset(summary.vcType, asset.uuid)">
                         <v-list-tile-action>
                             <v-checkbox
@@ -251,8 +256,23 @@
                 }).catch(() => {
                 });
             },
+            countMoreThan1 (assets) {
+                return assets.reduce((sum, a) => {
+                    sum += a.change > 1 ? 1 : 0;
+                    return sum;
+                }, 0);
+            },
+            countLessThan1 (assets) {
+                return assets.reduce((sum, a) => {
+                    sum += a.change <= 1 ? 1 : 0;
+                    return sum;
+                }, 0);
+            },
         },
     };
 </script>
 <style scoped lang="less">
+    .badge {
+        margin-right: 10px;
+    }
 </style>
