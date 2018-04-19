@@ -1,5 +1,38 @@
 <template>
     <v-container grid-list-lg>
+        <div class="condition">
+            <v-menu transition="slide-y-transition">
+                <v-text-field
+                    slot="activator"
+                    label="Start Date"
+                    v-model="startDate"
+                    prepend-icon="event"
+                    readonly
+                />
+                <v-date-picker v-model="startDate"
+                               no-title scrollable
+                               actions
+                               @input="onChangeDate"
+                >
+                </v-date-picker>
+            </v-menu>
+            <v-menu transition="slide-y-transition">
+                <v-text-field
+                    slot="activator"
+                    label="End Date"
+                    v-model="endDate"
+                    prepend-icon="event"
+                    readonly
+                />
+                <v-date-picker v-model="endDate"
+                               no-title
+                               scrollable
+                               actions
+                               @input="onChangeDate"
+                >
+                </v-date-picker>
+            </v-menu>
+        </div>
         <v-layout row wrap>
             <vue-chart type="line" :data="chartData"
                        :options="options"
@@ -21,6 +54,8 @@
         },
         data () {
             return {
+                startDate: moment().subtract(7, 'days').format('YYYY-MM-DD'),
+                endDate: moment().format('YYYY-MM-DD'),
                 chartData: {
                     labels: [],
                     datasets: [],
@@ -31,13 +66,15 @@
             };
         },
         methods: {
+            onChangeDate () {
+                this.loadAssetsSummary('binance', 'BTC');
+            },
             loadAssetsSummary (market, base) {
-                const timestamp = new Date().getTime();
                 axios.get(`/private/analysis/assets/${market}/${base}`, {
                     params: {
                         summary: true,
-                        start: timestamp - 1000 * 60 * 60 * 24 * 7,
-                        end: timestamp,
+                        start: moment(this.startDate).valueOf(),
+                        end: moment(this.endDate).add(1, 'days').valueOf(),
                     },
                 }).then(res => {
                     const data = res.data;
@@ -72,4 +109,7 @@
     };
 </script>
 <style scoped lang="less">
+    .condition {
+        padding-left: 30px;
+    }
 </style>
