@@ -8,7 +8,7 @@ const {VCTS_AT_API_URL} = require('../../../app/properties');
 describe('routes/private/auto-trader', function () {
     const USERNAME = 'test-user';
     const MARKET = 'test-market';
-    const BASE = 'BTC';
+    const BASE = '';
 
     let app;
 

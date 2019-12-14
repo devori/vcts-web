@@ -64,7 +64,7 @@
                 return this.$route.params.market;
             },
             bases () {
-                return ['BTC'];
+                return ['USDT'];
             },
             headers () {
                 return [

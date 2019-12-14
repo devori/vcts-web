@@ -8,7 +8,7 @@ const {VCTS_API_URL} = require('../../../app/properties');
 describe('routes/private/history', function () {
     const USERNAME = 'test-user';
     const MARKET = 'test-market';
-    const BASE = 'BTC';
+    const BASE = 'USDT';
 
     let app;
 
@@ -35,7 +35,7 @@ describe('routes/private/history', function () {
     describe('GET /:base?', () => {
         it('return histories', done => {
             supertest(app)
-                .get(`/BTC`)
+                .get(`/USDT`)
                 .query({start: 1, end: 2})
                 .expect(200, [1,2,3])
                 .end(done);

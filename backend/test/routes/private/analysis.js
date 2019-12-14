@@ -8,7 +8,7 @@ const analysisRouter = require('../../../app/routes/private/analysis');
 describe('routes/private/analysis', function () {
     const USERNAME = 'test-user';
     const MARKET = 'test-market';
-    const BASE = 'BTC';
+    const BASE = 'USDT';
 
     let app;
 
