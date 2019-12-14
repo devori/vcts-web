@@ -17,7 +17,7 @@
             VueChart,
         },
         mounted () {
-            this.loadAssetsSummary('binance', 'BTC');
+            this.loadAssetsSummary('binance', 'USDT');
         },
         data () {
             return {
