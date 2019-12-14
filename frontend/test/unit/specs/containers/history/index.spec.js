@@ -35,7 +35,7 @@ describe('containers/history', function () {
             beforeEach(() => {
                 vm.histories = [
                     {units: 1, rate: 1, vcType: 'a', timestamp: 1},
-                    {units: 1, rate: 1, vcType: 'BTC', timestamp: 1},
+                    {units: 1, rate: 1, vcType: 'USDT', timestamp: 1},
                     {units: 1, rate: 1, vcType: 'b', timestamp: 1},
                 ];
                 vm.conditions.coins = [];

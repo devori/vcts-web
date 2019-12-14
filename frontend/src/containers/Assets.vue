@@ -111,7 +111,7 @@
                 return this.$route.params.market;
             },
             bases () {
-                return ['BTC'];
+                return ['USDT'];
             },
             totalSummary () {
                 const estimation = this.listSummaries.reduce((acc, s) => acc + s.estimation, 0);
@@ -175,7 +175,7 @@
             loadTickersByBase (base) {
                 return axios.get(`/private/markets/${this.market}/tickers/${base}`).then(res => {
                     this.tickers = res.data;
-                    this.tickers['BTC'] = {bid: 1};
+                    this.tickers[this.bases[0]] = {bid: 1};
                 }).catch(() => {
                 });
             },

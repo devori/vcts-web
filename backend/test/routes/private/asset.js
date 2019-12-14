@@ -8,7 +8,7 @@ const {VCTS_API_URL} = require('../../../app/properties');
 describe('routes/private/assets', function () {
     const USERNAME = 'test-user';
     const MARKET = 'test-market';
-    const BASE = 'BTC';
+    const BASE = 'USDT';
 
     let app;
 
@@ -41,7 +41,7 @@ describe('routes/private/assets', function () {
     describe('GET /:base?', () => {
         it('return assets', done => {
             supertest(app)
-                .get(`/BTC`)
+                .get(`/USDT`)
                 .expect(200, {ETH: [1,2,3]})
                 .end(done);
         });
