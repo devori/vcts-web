@@ -111,7 +111,7 @@
                 return this.$route.params.market;
             },
             base () {
-                return this.market === 'upbit' ? 'WON' : 'USDT';
+                return this.market === 'upbit' ? 'KRW' : 'USDT';
             },
             totalSummary () {
                 const estimation = this.listSummaries.reduce((acc, s) => acc + s.estimation, 0);

@@ -80,7 +80,7 @@
                 return ['binance', 'upbit', 'poloniex'];
             },
             selectedCurrency () {
-                return this.selectedMarket === 'upbit' ? 'WON' : 'USDT';
+                return this.selectedMarket === 'upbit' ? 'KRW' : 'USDT';
             },
         },
         methods: {

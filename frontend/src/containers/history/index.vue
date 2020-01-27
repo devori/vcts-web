@@ -64,7 +64,7 @@
                 return this.$route.params.market;
             },
             base () {
-                return this.market === 'upbit' ? 'WON' : 'USDT';
+                return this.market === 'upbit' ? 'KRW' : 'USDT';
             },
             headers () {
                 return [
