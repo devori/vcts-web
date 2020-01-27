@@ -1,6 +1,15 @@
 <template>
     <v-container grid-list-lg>
         <div class="condition">
+            <v-layout row wrap>
+                <v-select
+                    :items="markets"
+                    value="binance"
+                    label="Market"
+                    outlined
+                    @change="onChangeMarket"
+                />
+            </v-layout>
             <v-menu transition="slide-y-transition">
                 <v-text-field
                     slot="activator"
@@ -50,7 +59,7 @@
             VueChart,
         },
         mounted () {
-            this.loadAssetsSummary('binance', 'USDT');
+            this.loadSummary();
         },
         data () {
             return {
@@ -63,11 +72,23 @@
                 options: {
                     color: ['red'],
                 },
+                selectedMarket: 'binance',
             };
         },
+        computed: {
+            markets () {
+                return ['binance', 'upbit', 'poloniex'];
+            },
+            selectedCurrency () {
+                return this.selectedMarket === 'upbit' ? 'WON' : 'USDT';
+            },
+        },
         methods: {
+            loadSummary () {
+                this.loadAssetsSummary(this.selectedMarket, this.selectedCurrency);
+            },
             onChangeDate () {
-                this.loadAssetsSummary('binance', 'BTC');
+                this.loadSummary();
             },
             loadAssetsSummary (market, base) {
                 axios.get(`/private/analysis/assets/${market}/${base}`, {
@@ -104,6 +125,10 @@
                         },
                     ];
                 }).catch(() => {});
+            },
+            onChangeMarket (market) {
+                this.selectedMarket = market;
+                this.loadSummary();
             },
         },
     };
