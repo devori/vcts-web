@@ -31,8 +31,9 @@
         data () {
             return {
                 markets: [
-                    {name: 'Poloniex'},
+                    {name: 'Upbit'},
                     {name: 'Binance'},
+                    {name: 'Poloniex'},
                 ],
             };
         },

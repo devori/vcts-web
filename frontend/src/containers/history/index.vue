@@ -38,7 +38,7 @@
             Conditions,
         },
         mounted () {
-            this.loadHistories(this.bases[0]);
+            this.loadHistories();
         },
         data () {
             const today = moment().format('YYYY-MM-DD');
@@ -63,8 +63,8 @@
             market () {
                 return this.$route.params.market;
             },
-            bases () {
-                return ['USDT'];
+            base () {
+                return this.market === 'upbit' ? 'WON' : 'USDT';
             },
             headers () {
                 return [
@@ -79,7 +79,7 @@
                 const coins = this.conditions.coins.map(c => c.toUpperCase());
 
                 return this.histories
-                    .filter(({vcType}) => vcType.toUpperCase() !== this.bases[0])
+                    .filter(({vcType}) => vcType.toUpperCase() !== this.base)
                     .filter(({vcType}) => coins.length === 0 || coins.indexOf(vcType.toUpperCase()) >= 0);
             },
             totalProfit () {
@@ -88,7 +88,7 @@
                 }, 0);
             },
             listCoins () {
-                const namesMap = this.histories.filter(({vcType}) => vcType.toUpperCase() !== this.bases[0])
+                const namesMap = this.histories.filter(({vcType}) => vcType.toUpperCase() !== this.base)
                     .reduce((accum, {vcType}) => {
                         accum[vcType] = true;
                         return accum;
@@ -110,7 +110,7 @@
         },
         methods: {
             loadHistories () {
-                return axios.get(`/private/markets/${this.market}/histories/${this.bases[0]}`, {
+                return axios.get(`/private/markets/${this.market}/histories/${this.base}`, {
                     params: {
                         start: moment(this.conditions.startDate).valueOf(),
                         end: moment(this.conditions.endDate).add(1, 'days').valueOf() - 1,

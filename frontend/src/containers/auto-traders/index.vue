@@ -38,20 +38,20 @@
                                   v-model="info.rule.options.rateForSale"/>
                         <v-slider prepend-icon="attach_money"
                                   :disabled="info.isRunning"
-                                  :hint="`Min - ${info.minUnits} USDT`"
+                                  :hint="`Min - ${info.minUnits} ${info.base}`"
                                   :persistent-hint="true"
-                                  :step="10"
-                                  :min="10"
-                                  :max="300"
+                                  :step="info.unitRange[0]"
+                                  :min="info.unitRange[0]"
+                                  :max="info.unitRange[1]"
                                   @input="(units) => onChangeUnits(info.market, info.base, units, info.maxUnits)"
                                   v-model="info.minUnits"/>
                         <v-slider prepend-icon="attach_money"
                                   :disabled="info.isRunning"
-                                  :hint="`Max - ${info.maxUnits} USDT`"
+                                  :hint="`Max - ${info.maxUnits} ${info.base}`"
                                   :persistent-hint="true"
-                                  :step="10"
-                                  :min="10"
-                                  :max="300"
+                                  :step="info.unitRange[0]"
+                                  :min="info.unitRange[0]"
+                                  :max="info.unitRange[1]"
                                   @input="(units) => onChangeUnits(info.market, info.base, info.minUnits, units)"
                                   v-model="info.maxUnits"/>
                         <v-slider prepend-icon="alarm"
@@ -139,13 +139,14 @@
                 return this.traders.find(t => t.market === market && t.base === base);
             },
             startAutoTrader (market, base) {
-                const {interval, minUnits, maxUnits, coins, rule} = this.getTrader(market, base);
+                const {interval, minUnits, maxUnits, coins, rule, unitRange} = this.getTrader(market, base);
                 axios.post(`/private/auto-traders/${market}/${base}`, {
                     interval: interval * 1000,
                     minUnits,
                     maxUnits,
                     coins,
                     rule,
+                    unitRange,
                 }).finally(() => {
                     return this.loadAutoTraders();
                 }).catch(() => {});
@@ -215,12 +216,14 @@
             onCreateTrader (newTrader) {
                 const market = newTrader.market.toLowerCase();
                 const base = newTrader.base.toUpperCase();
+                const { min, max } = newTrader;
                 this.traders.push({
                     market,
                     base,
                     interval: 300000,
-                    minUnits: 0.002,
-                    maxUnits: 0.01,
+                    unitRange: [min, max],
+                    minUnits: min,
+                    maxUnits: max,
                     coins: [],
                     showDetails: false,
                     rule: {

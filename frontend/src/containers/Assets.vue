@@ -88,8 +88,8 @@
 
     export default {
         mounted () {
-            this.loadTickersByBase(this.bases[0]);
-            this.loadAssetsByBase(this.bases[0]);
+            this.loadTickersByBase();
+            this.loadAssetsByBase();
         },
         data () {
             return {
@@ -110,8 +110,8 @@
             market () {
                 return this.$route.params.market;
             },
-            bases () {
-                return ['USDT'];
+            base () {
+                return this.market === 'upbit' ? 'WON' : 'USDT';
             },
             totalSummary () {
                 const estimation = this.listSummaries.reduce((acc, s) => acc + s.estimation, 0);
@@ -166,16 +166,16 @@
             },
         },
         methods: {
-            loadAssetsByBase (base) {
-                return axios.get(`/private/markets/${this.market}/assets/${base}`).then(res => {
+            loadAssetsByBase () {
+                return axios.get(`/private/markets/${this.market}/assets/${this.base}`).then(res => {
                     this.assets = res.data;
                 }).catch(() => {
                 });
             },
-            loadTickersByBase (base) {
-                return axios.get(`/private/markets/${this.market}/tickers/${base}`).then(res => {
+            loadTickersByBase () {
+                return axios.get(`/private/markets/${this.market}/tickers/${this.base}`).then(res => {
                     this.tickers = res.data;
-                    this.tickers[this.bases[0]] = {bid: 1};
+                    this.tickers[this.base] = {bid: 1};
                 }).catch(() => {
                 });
             },
@@ -203,14 +203,13 @@
                 };
             },
             onClickRemove () {
-                const base = this.bases[0];
                 const {vcType, ids} = this.selectedAssets;
                 ids.reduce((prom, id) => {
                     return prom.then(() => {
-                        return axios.delete(`/private/markets/${this.market}/assets/${base}/${vcType}/${id}`);
+                        return axios.delete(`/private/markets/${this.market}/assets/${this.base}/${vcType}/${id}`);
                     });
                 }, Promise.resolve()).then(() => {
-                    return this.loadAssetsByBase(this.bases[0]);
+                    return this.loadAssetsByBase();
                 }).then(() => {
                     this.selectedAssets = {
                         vcType: '',
@@ -219,10 +218,9 @@
                 });
             },
             onClickMerge () {
-                const base = this.bases[0];
                 const {vcType, ids} = this.selectedAssets;
-                axios.put(`/private/markets/${this.market}/assets/${base}/${vcType}?mode=merge`, {ids}).then(() => {
-                    return this.loadAssetsByBase(this.bases[0]);
+                axios.put(`/private/markets/${this.market}/assets/${this.base}/${vcType}?mode=merge`, {ids}).then(() => {
+                    return this.loadAssetsByBase();
                 }).then(() => {
                     this.selectedAssets = {
                         vcType: '',
@@ -232,7 +230,6 @@
                 });
             },
             onClickSell () {
-                const base = this.bases[0];
                 const {vcType, ids} = this.selectedAssets;
                 const rate = this.tickers[vcType].bid;
                 const units = this.assets[vcType].filter(a => {
@@ -241,13 +238,13 @@
 
                 axios.post(`/private/markets/${this.market}/order`, {
                     side: 'sell',
-                    base,
+                    base: this.base,
                     vcType,
                     ids,
                     units,
                     rate,
                 }).then(() => {
-                    return this.loadAssetsByBase(this.bases[0]);
+                    return this.loadAssetsByBase(this.base);
                 }).then(() => {
                     this.selectedAssets = {
                         vcType: '',

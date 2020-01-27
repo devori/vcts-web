@@ -19,6 +19,16 @@
                                   v-model="base"
                                   clearable
                                   required/>
+                    <v-text-field label="Min Trading"
+                                  v-model="min"
+                                  clearable
+                                  type="number"
+                                  required/>
+                    <v-text-field label="Max Trading"
+                                  v-model="max"
+                                  clearable
+                                  type="number"
+                                  required/>
                 </v-card-text>
                 <v-card-actions>
                     <v-btn color="primary"
@@ -46,14 +56,25 @@
                 showDialog: false,
                 market: '',
                 base: '',
+                min: 1,
+                max: 10,
             };
         },
         computed: {
             isOkDisabled () {
                 const market = this.market.toLowerCase();
                 const base = this.base.toUpperCase();
+                const { min, max } = this;
 
-                if (!market || !base) {
+                if (!market || !base || !min || !max) {
+                    return true;
+                }
+
+                if (min > max) {
+                    return true;
+                }
+
+                if (min <= 0) {
                     return true;
                 }
 
@@ -62,8 +83,8 @@
         },
         methods: {
             onClickOk () {
-                const {market, base} = this;
-                this.$emit('create', {market, base});
+                const {market, base, min, max} = this;
+                this.$emit('create', {market, base, min, max});
                 this.showDialog = false;
             },
         },
