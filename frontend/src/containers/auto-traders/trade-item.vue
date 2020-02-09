@@ -1,5 +1,5 @@
 <template>
-    <v-card class="blue lighten-4">
+    <v-card :class="['lighten-4', (isError ? 'red' : 'blue')]">
         <v-card-title class="justify-space-between">
             <div class="title">{{ item.name }}</div>
             <v-btn icon
@@ -38,6 +38,10 @@
                 },
             },
             disabled: {
+                type: Boolean,
+                default: false,
+            },
+            isError: {
                 type: Boolean,
                 default: false,
             },

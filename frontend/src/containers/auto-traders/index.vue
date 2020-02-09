@@ -76,6 +76,7 @@
                                     <TradeItem :name="coin.name"
                                                :disabled="info.isRunning"
                                                :item="coin"
+                                               :isError="!isAvailableCoin(info.market, info.base, coin.name)"
                                                @change="(changedItem) => onChangeTradeItem(info.market, info.base, changedItem)"
                                                @close="onRemoveTradeItem(info.market, info.base, coin.name)"
                                     />
@@ -150,6 +151,9 @@
                 const addedCoinNames = addedCoins.map(({ name }) => name);
                 const hintCoins = this.availableCoins[market][base].filter(n => !addedCoinNames.includes(n));
                 return `Add Coin Name (${hintCoins.join(', ').substr(0, 30)})`;
+            },
+            isAvailableCoin (market, base, coinName) {
+                return this.availableCoins[market] && this.availableCoins[market][base] && this.availableCoins[market][base].includes(coinName);
             },
             getTrader (market, base) {
                 return this.traders.find(t => t.market === market && t.base === base);
