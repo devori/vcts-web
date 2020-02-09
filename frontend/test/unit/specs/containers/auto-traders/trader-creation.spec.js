@@ -58,7 +58,7 @@ describe('containers/auto-traders/trader-creation', function () {
 
             it('should emit create event with market and base', () => {
                 vm.onClickOk();
-                expect(vm.$emit.calledWith('create', {market: 'market', base: 'BASE'})).to.be.true;
+                expect(vm.$emit.calledWith('create', { market: 'market', base: 'BASE', min: 1, max: 10 })).to.be.true;
             });
 
             it('set false to showDialog', () => {

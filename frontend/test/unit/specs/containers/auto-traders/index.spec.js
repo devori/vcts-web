@@ -23,16 +23,17 @@ describe('containers/auto-traders', function () {
     describe('methods', () => {
         describe('onCreateTrader', () => {
             it('create trader with default values', () => {
-                vm.onCreateTrader({market: MARKET, base: BASE});
+                vm.onCreateTrader({market: MARKET, base: BASE, min: 1, max: 10});
                 expect(vm.traders.length).to.equal(1);
                 expect(vm.traders[0]).to.deep.equal({
                     market: MARKET,
                     base: BASE,
                     interval: 300000,
-                    minUnits: 0.002,
-                    maxUnits: 0.01,
+                    minUnits: 1,
+                    maxUnits: 10,
                     coins: [],
                     showDetails: false,
+                    unitRange: [1, 10],
                     rule: {
                         name: 'default',
                         options: {

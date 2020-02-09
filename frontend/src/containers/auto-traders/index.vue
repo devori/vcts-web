@@ -64,7 +64,7 @@
                                   v-model="info.interval"/>
                     </v-card-text>
                     <v-card-actions class="justify-center">
-                        <div>Coin Setting</div>
+                        <div>Coin Setting ({{ info.coins.length }})</div>
                         <v-btn icon @click.native="info.showDetails = !info.showDetails">
                             <v-icon>{{ info.showDetails ? 'keyboard_arrow_down' : 'keyboard_arrow_up' }}</v-icon>
                         </v-btn>
@@ -81,7 +81,7 @@
                                     />
                                 </v-flex>
                             </v-layout>
-                            <v-text-field label="Add Coin Name"
+                            <v-text-field :label="getHintToAddCoins(info.market, info.base, info.coins)"
                                           :disabled="info.isRunning"
                                           clearable
                                           v-model="coinName"
@@ -99,6 +99,7 @@
     import axios from 'axios';
     import TradeItem from './trade-item';
     import TraderCreation from './trader-creation';
+    import { getTickersByBase } from '../../apis';
 
     export default {
         components: {
@@ -115,6 +116,7 @@
                 showAddDialog: false,
                 marketName: '',
                 baseName: '',
+                availableCoins: {},
             };
         },
         methods: {
@@ -133,7 +135,21 @@
                         };
                         return t;
                     });
+                }).then(() => {
+                    this.traders.forEach(async ({ market, base }) => {
+                        const tickers = await getTickersByBase(market, base);
+                        this.availableCoins[market] = this.availableCoins || {};
+                        this.availableCoins[base] = Object.keys(tickers);
+                    });
                 }).catch(() => {});
+            },
+            getHintToAddCoins (market, base, addedCoins) {
+                if (!this.availableCoins[market] || !this.availableCoins[market][base]) {
+                    return '';
+                }
+                const addedCoinNames = addedCoins.map(({ name }) => name);
+                const hintCoins = this.availableCoins[market][base].filter(n => !addedCoinNames.includes(n));
+                return `Add Coin Name (${hintCoins.join(', ').substr(0, 30)})`;
             },
             getTrader (market, base) {
                 return this.traders.find(t => t.market === market && t.base === base);
@@ -190,7 +206,7 @@
             },
             addCoin (market, base) {
                 const name = this.coinName.toUpperCase();
-                if (!name) {
+                if (!this.availableCoins[base].includes(name)) {
                     return;
                 }
                 const trader = this.getTrader(market, base);
@@ -202,6 +218,8 @@
                     purchase: { inUse: true },
                     sale: { inUse: true },
                 });
+
+                this.coinName = '';
             },
             onRemoveTradeItem (market, base, name) {
                 const trader = this.getTrader(market, base);
