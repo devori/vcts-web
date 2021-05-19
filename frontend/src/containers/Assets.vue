@@ -111,7 +111,13 @@
                 return this.$route.params.market;
             },
             base () {
-                return this.market === 'upbit' ? 'KRW' : 'USDT';
+                switch (this.market) {
+                case 'upbit':
+                case 'huobi':
+                    return 'KRW';
+                default:
+                    return 'USDT';
+                }
             },
             totalSummary () {
                 const estimation = this.listSummaries.reduce((acc, s) => acc + s.estimation, 0);
