@@ -33,6 +33,7 @@
                 markets: [
                     {name: 'Upbit'},
                     {name: 'Binance'},
+                    {name: 'Huobi'},
                     {name: 'Poloniex'},
                 ],
             };
