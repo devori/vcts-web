@@ -24,7 +24,7 @@
                                   :persistent-hint="true"
                                   :step="0.01"
                                   :min="0.01"
-                                  :max="0.30"
+                                  :max="0.50"
                                   @input="(rate) => onChangeRate(info.market, info.base, rate, info.rule.options.rateForSale)"
                                   v-model="info.rule.options.rateForPurchase"/>
                         <v-slider prepend-icon="exposure_neg_1"
@@ -33,7 +33,7 @@
                                   :persistent-hint="true"
                                   :step="0.01"
                                   :min="0.01"
-                                  :max="0.30"
+                                  :max="0.50"
                                   @input="(rate) => onChangeRate(info.market, info.base, info.rule.options.rateForPurchase, rate)"
                                   v-model="info.rule.options.rateForSale"/>
                         <v-slider prepend-icon="attach_money"
