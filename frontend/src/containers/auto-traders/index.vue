@@ -139,8 +139,8 @@
                 }).then(() => {
                     this.traders.forEach(async ({ market, base }) => {
                         const tickers = await getTickersByBase(market, base);
-                        this.availableCoins[market] = this.availableCoins || {};
-                        this.availableCoins[base] = Object.keys(tickers);
+                        this.availableCoins[market] = this.availableCoins[market] || {};
+                        this.availableCoins[market][base] = Object.keys(tickers);
                     });
                 }).catch(() => {});
             },
@@ -210,7 +210,7 @@
             },
             addCoin (market, base) {
                 const name = this.coinName.toUpperCase();
-                if (!this.availableCoins[base].includes(name)) {
+                if (!this.availableCoins[market][base].includes(name)) {
                     return;
                 }
                 const trader = this.getTrader(market, base);
