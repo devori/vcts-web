@@ -18,6 +18,11 @@
                         </div>
                     </v-card-title>
                     <v-card-text>
+                        <v-text-field
+                            v-model="info.rule.name"
+                            label="Rule"
+                            outlined
+                        />
                         <v-slider prepend-icon="exposure_plus_1"
                                   :disabled="info.isRunning"
                                   :hint="`Buy : -${Math.trunc(info.rule.options.rateForPurchase * 100)} %`"
@@ -128,7 +133,7 @@
                         t.showDetails = false;
                         t.coins.sort((c1, c2) => c1.name < c2.name ? -1 : 1);
                         t.rule = t.rule || {
-                            name: 'default',
+                            name: 'DEFAULT',
                             options: {
                                 rateForPurchase: 0.07,
                                 rateForSale: 0.07,
@@ -249,7 +254,7 @@
                     coins: [],
                     showDetails: false,
                     rule: {
-                        name: 'default',
+                        name: 'DEFAULT',
                         options: {
                             rateForPurchase: 0.07,
                             rateForSale: 0.07,
